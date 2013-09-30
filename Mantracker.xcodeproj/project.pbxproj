@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		46C963AA17FA259600686A7F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 46C963A917FA259600686A7F /* Main.storyboard */; };
 		FBF26CEB17F8B7E60023D29C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26CEA17F8B7E60023D29C /* Foundation.framework */; };
 		FBF26CED17F8B7E60023D29C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26CEC17F8B7E60023D29C /* CoreGraphics.framework */; };
 		FBF26CEF17F8B7E60023D29C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26CEE17F8B7E60023D29C /* UIKit.framework */; };
 		FBF26CF517F8B7E60023D29C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FBF26CF317F8B7E60023D29C /* InfoPlist.strings */; };
 		FBF26CF717F8B7E60023D29C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FBF26CF617F8B7E60023D29C /* main.m */; };
-		FBF26CFE17F8B7E60023D29C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FBF26CFC17F8B7E60023D29C /* Main.storyboard */; };
 		FBF26D0317F8B7E60023D29C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBF26D0217F8B7E60023D29C /* Images.xcassets */; };
 		FBF26D0A17F8B7E60023D29C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26D0917F8B7E60023D29C /* XCTest.framework */; };
 		FBF26D0B17F8B7E60023D29C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26CEA17F8B7E60023D29C /* Foundation.framework */; };
@@ -40,6 +40,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		46C963A917FA259600686A7F /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		FBF26CE717F8B7E60023D29C /* Mantracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mantracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBF26CEA17F8B7E60023D29C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FBF26CEC17F8B7E60023D29C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -48,7 +49,6 @@
 		FBF26CF417F8B7E60023D29C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FBF26CF617F8B7E60023D29C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		FBF26CF817F8B7E60023D29C /* Mantracker-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Mantracker-Prefix.pch"; sourceTree = "<group>"; };
-		FBF26CFD17F8B7E60023D29C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FBF26D0217F8B7E60023D29C /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		FBF26D0817F8B7E60023D29C /* MantrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MantrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBF26D0917F8B7E60023D29C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -209,7 +209,7 @@
 		FBF26D2817F8BA3B0023D29C /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				FBF26CFC17F8B7E60023D29C /* Main.storyboard */,
+				46C963A917FA259600686A7F /* Main.storyboard */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -291,9 +291,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46C963AA17FA259600686A7F /* Main.storyboard in Resources */,
 				FBF26D0317F8B7E60023D29C /* Images.xcassets in Resources */,
 				FBF26CF517F8B7E60023D29C /* InfoPlist.strings in Resources */,
-				FBF26CFE17F8B7E60023D29C /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,15 +349,6 @@
 				FBF26CF417F8B7E60023D29C /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		FBF26CFC17F8B7E60023D29C /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				FBF26CFD17F8B7E60023D29C /* Base */,
-			);
-			name = Main.storyboard;
-			path = ..;
 			sourceTree = "<group>";
 		};
 		FBF26D1217F8B7E60023D29C /* InfoPlist.strings */ = {
@@ -530,6 +521,7 @@
 				FBF26D1B17F8B7E60023D29C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FBF26D1C17F8B7E60023D29C /* Build configuration list for PBXNativeTarget "MantrackerTests" */ = {
 			isa = XCConfigurationList;
@@ -538,6 +530,7 @@
 				FBF26D1E17F8B7E60023D29C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
