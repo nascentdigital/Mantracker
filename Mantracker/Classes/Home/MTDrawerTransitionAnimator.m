@@ -12,6 +12,8 @@
 #import "UIImage+ImageEffects.h"
 #import "MTLocationController.h"
 
+#define USE_SIMPLE_ANIMATION 1
+
 
 @interface MTDrawerTransitionAnimator()
 {
@@ -19,9 +21,9 @@
     @private CGRect _toEndFrame;
     @private CGPoint _startingCenter;
     @private UIImage *_blurredImage;
+    @private BOOL _useSimpleAnimation;
 }
 
-@property (nonatomic, weak) UIView *containerView;
 @property (nonatomic, weak) UIView *dynamicView;
 
 @property (nonatomic, strong) id<UIViewControllerContextTransitioning>transitionContext;
@@ -37,6 +39,7 @@
 @property (nonatomic, strong) UIGravityBehavior *gravityBehavior;
 
 - (void)MT_applyBlur;
+- (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext;
 
 @end
 
@@ -89,7 +92,6 @@
     self.interactive = NO;
     self.appearing = NO;
     self.percentComplete = 0.f;
-    self.containerView = nil;
     self.dynamicView = nil;
     self.cancelled = NO;
 }
@@ -97,44 +99,31 @@
 - (NSTimeInterval)transitionDuration:
     (id<UIViewControllerContextTransitioning>)transitionContext
 {
-    return 0.3f;
+    return _useSimpleAnimation == YES
+        ? 0.3f
+        : 1.f;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
     NSLog(@"starting animation transtion");
     
-    _transitionContext = transitionContext;
+    // initialize the transitionContext
+    [self MT_initializeTransition: transitionContext];
+    
     UIViewController *fromVC = [transitionContext viewControllerForKey:
         UITransitionContextFromViewControllerKey];
     UIViewController *toVC = [transitionContext viewControllerForKey:
         UITransitionContextToViewControllerKey];
     UIView *containerView = [transitionContext containerView];
-    CGSize containerViewSize = containerView.frame.size;
-    self.containerView = containerView;
     
     if (self.isAppearing)
     {
-        CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
-    
-        _toBeginFrame = CGRectMake(
-            0.f,
-            -containerViewSize.height + navigationBarFrame.origin.y + navigationBarFrame.size.height,
-            containerViewSize.width,
-            containerViewSize.height);
-        _toEndFrame = [transitionContext finalFrameForViewController: toVC];
-
-        
         toVC.view.frame = _toBeginFrame;
         [containerView addSubview: toVC.view];
     }
     else
     {
-        CGRect toStart = [transitionContext initialFrameForViewController: toVC];
-        CGRect toEnd = [transitionContext finalFrameForViewController: toVC];
-        CGRect fromStart = [transitionContext initialFrameForViewController: fromVC];
-        CGRect fromEnd = [transitionContext finalFrameForViewController: fromVC];
-        
         toVC.view.frame = [transitionContext initialFrameForViewController: fromVC];
         fromVC.view.frame = [transitionContext initialFrameForViewController: fromVC];
         
@@ -142,25 +131,51 @@
             belowSubview: fromVC.view];
     }
     
-    [UIView animateWithDuration: [self transitionDuration: transitionContext]
-        animations: ^
+    void (^animation)() =  ^
         {
             if (self.isAppearing)
+                {
+                    toVC.view.frame = [transitionContext finalFrameForViewController: toVC];
+                }
+                else
+                {
+                    [containerView insertSubview: toVC.view
+                        belowSubview: fromVC.view];
+                    fromVC.view.frame = _toBeginFrame;
+                }
+
+        };
+    
+    if (_useSimpleAnimation == YES)
+    {
+        [UIView animateWithDuration: [self transitionDuration: transitionContext]
+            animations: ^
             {
-                toVC.view.frame = [transitionContext finalFrameForViewController: toVC];
+                animation();
             }
-            else
+            completion: ^(BOOL finished)
             {
-                [containerView insertSubview: toVC.view
-                    belowSubview: fromVC.view];
-                fromVC.view.frame = _toBeginFrame;
+                [transitionContext completeTransition: YES];
+                self.appearing = NO;
+            }];
+    }
+    else
+    {
+        [UIView animateWithDuration: [self transitionDuration: transitionContext]
+            delay: 0.f
+            usingSpringWithDamping: 0.6f
+            initialSpringVelocity: 1.f
+            options: UIViewAnimationOptionCurveEaseInOut
+            animations: ^
+            {
+                animation();
             }
-        }
-        completion: ^(BOOL finished)
-        {
-            [transitionContext completeTransition: YES];
-            self.appearing = NO;
-        }];
+            completion: ^(BOOL finished)
+            {
+                [transitionContext completeTransition: YES];
+                self.appearing = NO;
+            }];
+    }
 }
 
 
@@ -169,27 +184,15 @@
 - (void)startInteractiveTransition: (id<UIViewControllerContextTransitioning>)transitionContext
 {
     NSLog(@"starting interactive transtion");
-
-    _transitionContext = transitionContext;
+    
+    // initialize the transitionContext
+    [self MT_initializeTransition: transitionContext];
+    
     UIViewController *fromVC = [transitionContext viewControllerForKey:
         UITransitionContextFromViewControllerKey];
     UIViewController *toVC = [transitionContext viewControllerForKey:
         UITransitionContextToViewControllerKey];
     UIView *containerView = [transitionContext containerView];
-    CGSize containerViewSize = containerView.frame.size;
-    self.containerView = containerView;
-    
-    if (self.isAppearing)
-    {
-        CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
-    
-        _toBeginFrame = CGRectMake(
-            0.f,
-            -containerViewSize.height + navigationBarFrame.origin.y + navigationBarFrame.size.height,
-            containerViewSize.width,
-            containerViewSize.height);
-        _toEndFrame = [transitionContext finalFrameForViewController: toVC];
-    }
     
     if ([toVC isKindOfClass: [MTDrawerController class]])
     {
@@ -223,8 +226,7 @@
 
     self.interactive = YES;
 
-    CGPoint point =  [recognizer locationInView:
-        self.homeController.navigationController.view];
+    CGPoint point =  [recognizer locationInView: self.homeController.navigationController.view];
     CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
     
     UIViewController *visibleController =
@@ -237,7 +239,8 @@
         NSLog(@"presenting drawer");
         self.appearing = YES;
         [self.homeController presentViewController: self.homeController.drawerController
-            animated: YES completion: nil];
+            animated: YES
+            completion: nil];
         return YES;
     }
     else if ([visibleController isKindOfClass: [MTDrawerController class]]
@@ -292,8 +295,10 @@
         case UIGestureRecognizerStateBegan:
         case UIGestureRecognizerStateChanged:
         {
-            UIViewController *fromVC = [_transitionContext viewControllerForKey: UITransitionContextFromViewControllerKey];
-            UIViewController *toVC = [_transitionContext viewControllerForKey: UITransitionContextToViewControllerKey];
+            UIViewController *fromVC = [_transitionContext viewControllerForKey:
+                UITransitionContextFromViewControllerKey];
+            UIViewController *toVC = [_transitionContext viewControllerForKey:
+                UITransitionContextToViewControllerKey];
 
             UIView *view = self.isAppearing == YES
                 ? toVC.view
@@ -400,7 +405,12 @@
     size.height += self.homeController.view.frame.origin.y;
     UIGraphicsBeginImageContextWithOptions(size, NO, 0.f);
     
-    [self.homeController.navigationController.view drawViewHierarchyInRect: CGRectMake(0.f, self.homeController.view.frame.origin.y, size.width, size.height) afterScreenUpdates: NO];
+    [self.homeController.navigationController.view drawViewHierarchyInRect: CGRectMake(
+        0.f,
+        self.homeController.view.frame.origin.y,
+        size.width,
+        size.height)
+        afterScreenUpdates: NO];
     
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
@@ -409,6 +419,34 @@
     _blurredImage = [viewImage applyLightEffect];
 
     self.homeController.drawerController.bkgImage.image = _blurredImage;
+}
+
+- (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext
+{
+    _useSimpleAnimation = USE_SIMPLE_ANIMATION == 1;
+
+    self.transitionContext = transitionContext;
+    UIViewController *toVC = [transitionContext viewControllerForKey:
+        UITransitionContextToViewControllerKey];
+    UIView *containerView = [transitionContext containerView];
+    CGSize containerViewSize = containerView.frame.size;
+    
+//    CGRect toStart = [transitionContext initialFrameForViewController: toVC];
+//    CGRect toEnd = [transitionContext finalFrameForViewController: toVC];
+//    CGRect fromStart = [transitionContext initialFrameForViewController: fromVC];
+//    CGRect fromEnd = [transitionContext finalFrameForViewController: fromVC];
+    
+    if (self.isAppearing)
+    {
+        CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
+    
+        _toBeginFrame = CGRectMake(
+            0.f,
+            -containerViewSize.height + navigationBarFrame.origin.y + navigationBarFrame.size.height,
+            containerViewSize.width,
+            containerViewSize.height);
+        _toEndFrame = [transitionContext finalFrameForViewController: toVC];
+    }
 }
 
 @end
