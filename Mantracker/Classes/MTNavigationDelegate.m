@@ -8,6 +8,7 @@
 
 @interface MTNavigationDelegate ()
 {
+	@private __strong MTHomeLocationAnimator *_homeLocationAnimator;
 }
 
 @end  // @interface MTNavigationDelegate ()
@@ -30,8 +31,9 @@
         // handle pushing to location from home
         if ([dstController isMemberOfClass: [MTLocationController class]])
         {
-            return [[MTHomeLocationAnimator alloc]
+            _homeLocationAnimator = [[MTHomeLocationAnimator alloc]
                 init];
+			return _homeLocationAnimator;
         }
     }
     
@@ -42,6 +44,7 @@
         if ([srcController isMemberOfClass: [MTLocationController class]]
             && [dstController isMemberOfClass: [MTHomeController class]])
         {
+			return _homeLocationAnimator;
         }
     }
     

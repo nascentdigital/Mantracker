@@ -13,6 +13,12 @@
 
 @interface MTHomeLocationAnimator ()
 {
+	@private CGRect _topSnapStartFrame;
+	@private CGRect _topSnapEndFrame;
+	@private CGRect _botSnapStartFrame;
+	@private CGRect _botSnapEndFrame;
+	@private UIView *_topSnapView;
+	@private UIView *_botSnapView;
 }
 
 @end  // @interface MTHomeLocationAnimator ()
@@ -32,84 +38,154 @@
 
 - (void)animateTransition: (id<UIViewControllerContextTransitioning>)context
 {
-    // resolve controllers/views
-    MTHomeController *homeController = (MTHomeController *)[context
-        viewControllerForKey: UITransitionContextFromViewControllerKey];
-    UIView *homeView = homeController.view;
-    MTLocationController *locationController = (MTLocationController *)[context
-        viewControllerForKey: UITransitionContextToViewControllerKey];
+	MTHomeController *homeController;
+	MTLocationController *locationController;
+	BOOL transitionIsForward = YES;
+	
+	// resolve controllers
+	if ([[context viewControllerForKey: UITransitionContextFromViewControllerKey]
+		isKindOfClass: [MTHomeController class]])
+	{
+		homeController = (MTHomeController *)[context
+			viewControllerForKey: UITransitionContextFromViewControllerKey];
+		locationController = (MTLocationController *)[context
+			viewControllerForKey: UITransitionContextToViewControllerKey];
+	}
+	else
+	{
+		locationController = (MTLocationController *)[context
+			viewControllerForKey: UITransitionContextFromViewControllerKey];
+		homeController = (MTHomeController *)[context
+			viewControllerForKey: UITransitionContextToViewControllerKey];
+		transitionIsForward = NO;
+	}
+	
+	// get views
     UIView *locationView = locationController.view;
+	UIView *homeView = homeController.view;
     locationView.alpha = 0.f;
     
-    // bind views to container
-    [context.containerView addSubview: homeView];
-    [context.containerView addSubview: locationView];
-    
-    // determine selected cell and frame
-    MTHomeLocationCell *cell = (MTHomeLocationCell *)[homeController.collectionView
-        cellForItemAtIndexPath: locationController.locationIndexPath];
-    CGRect cellFrame = [cell convertRect: cell.bounds
-        toView: homeController.view];
-    
-    // set area we want to snapshot
-	CGRect topSnapshotFrame = CGRectMake(
-		0, 0,
-		homeView.frame.size.width, cellFrame.origin.y + CELL_SPLIT_YOFFSET);
+	// transition from home to location
+	if (transitionIsForward)
+	{
+	    // bind views to container
+		[context.containerView addSubview: homeView];
+		[context.containerView addSubview: locationView];
+		
+		// determine selected cell and frame
+		MTHomeLocationCell *cell = (MTHomeLocationCell *)[homeController.collectionView
+			cellForItemAtIndexPath: locationController.locationIndexPath];
+		CGRect cellFrame = [cell convertRect: cell.bounds
+			toView: homeController.view];
+		
+		// set area we want to snapshot
+		CGRect topSnapshotFrame = CGRectMake(
+			0, 0,
+			homeView.frame.size.width, cellFrame.origin.y + CELL_SPLIT_YOFFSET);
 
-	CGRect botSnapshotFrame = CGRectMake(
-		0, cellFrame.origin.y + CELL_SPLIT_YOFFSET,
-		homeView.frame.size.width,
-		homeView.frame.size.height - topSnapshotFrame.size.height);
+		CGRect botSnapshotFrame = CGRectMake(
+			0, cellFrame.origin.y + CELL_SPLIT_YOFFSET,
+			homeView.frame.size.width,
+			homeView.frame.size.height - topSnapshotFrame.size.height);
 		
-	NSLog(@"home height is: %f \ntop frame height: %f \nbot frame height %f", homeView.frame.size.height, topSnapshotFrame.size.height, botSnapshotFrame.size.height);
-	
-	// create upper and lower snapshots
-	UIView *bottomSnapshot = [homeView resizableSnapshotViewFromRect: botSnapshotFrame
-		afterScreenUpdates: NO withCapInsets: UIEdgeInsetsZero];
-		
-	UIView *topSnapshot = [homeView resizableSnapshotViewFromRect: topSnapshotFrame
-		afterScreenUpdates: NO withCapInsets: UIEdgeInsetsZero];
-	
-	// set snapshot initial positions
-	topSnapshot.frame = CGRectMake(
-		0, 0,
-		topSnapshotFrame.size.width, topSnapshotFrame.size.height);
-		
-	bottomSnapshot.frame = CGRectMake(
-		0, topSnapshotFrame.size.height,
-		botSnapshotFrame.size.width, botSnapshotFrame.size.height);
-	
-	[locationView addSubview: topSnapshot];
-	[locationView addSubview: bottomSnapshot];
-	locationView.alpha = 1.f;
-
-	// animate
-	[UIView animateKeyframesWithDuration: MTAnimatorDuration
-		delay: 0.f
-		options: 0
-		animations:
-		^{
-			[UIView addKeyframeWithRelativeStartTime: 0.f relativeDuration: 0.3 animations:^{
-				topSnapshot.frame = CGRectMake(
-					0, -topSnapshot.frame.size.height + CELL_SPLIT_YOFFSET
-						+ locationController.navigationController.navigationBar.frame.size.height
-						+ locationController.navigationController.navigationBar.frame.origin.y,
-					topSnapshot.frame.size.width, topSnapshot.frame.size.height);
-					
-				bottomSnapshot.frame = CGRectMake(0, homeView.frame.size.height,
-					bottomSnapshot.frame.size.width, bottomSnapshot.frame.size.height);
-			}];
+		// create upper and lower snapshots
+		_botSnapView = [homeView resizableSnapshotViewFromRect: botSnapshotFrame
+			afterScreenUpdates: NO withCapInsets: UIEdgeInsetsZero];
 			
-			[UIView addKeyframeWithRelativeStartTime: 0.4f relativeDuration: 0.6f animations:^{
-				topSnapshot.alpha = 0.f;
+		_topSnapView = [homeView resizableSnapshotViewFromRect: topSnapshotFrame
+			afterScreenUpdates: NO withCapInsets: UIEdgeInsetsZero];
+		
+		// set snapshot initial positions
+		_topSnapStartFrame  = CGRectMake(
+			0, 0,
+			topSnapshotFrame.size.width, topSnapshotFrame.size.height);
+			
+		_botSnapStartFrame = CGRectMake(
+			0, topSnapshotFrame.size.height,
+			botSnapshotFrame.size.width, botSnapshotFrame.size.height);
+		
+		_topSnapView.frame = _topSnapStartFrame;
+		_botSnapView.frame = _botSnapStartFrame;
+		
+		[locationView addSubview: _topSnapView];
+		[locationView addSubview: _botSnapView];
+		locationView.alpha = 1.f;
+
+		// animate
+		[UIView animateKeyframesWithDuration: MTAnimatorDuration
+			delay: 0.f
+			options: 0
+			animations:
+			^{
+				[UIView addKeyframeWithRelativeStartTime: 0.f relativeDuration: 0.2 animations:^{
+					_topSnapEndFrame = CGRectMake(
+						0,
+						-_topSnapView.frame.size.height + CELL_SPLIT_YOFFSET
+							+ locationController.navigationController.navigationBar.frame.size.height
+							+ locationController.navigationController.navigationBar.frame.origin.y,
+						_topSnapView.frame.size.width, _topSnapView.frame.size.height);
+					_topSnapView.frame = _topSnapEndFrame;
+						
+					_botSnapEndFrame = CGRectMake(0, homeView.frame.size.height,
+						_botSnapView.frame.size.width, _botSnapView.frame.size.height);
+					_botSnapView.frame = _botSnapEndFrame;
+				}];
+				
+				[UIView addKeyframeWithRelativeStartTime: 0.4f relativeDuration: 0.6f animations:^{
+					_topSnapView.alpha = 0.f;
+				}];
+			}
+			completion:
+			^(BOOL finished){
+				[_topSnapView removeFromSuperview];
+				[_botSnapView removeFromSuperview];
+				[context completeTransition: finished];
 			}];
-		}
-		completion:
-		^(BOOL finished){
-			[topSnapshot removeFromSuperview];
-			[bottomSnapshot removeFromSuperview];
-			[context completeTransition: finished];
-		}];
+	}
+	// transitiong is from location to home
+	else
+	{
+		// create snapshot of location view
+		UIView *locationSnap = [locationView resizableSnapshotViewFromRect: locationView.frame
+			afterScreenUpdates: NO withCapInsets: UIEdgeInsetsZero];
+
+	    // bind views to container
+		[context.containerView addSubview: homeView];
+		[context.containerView addSubview: locationView];
+		[context.containerView addSubview: locationSnap];
+		
+		_topSnapView.frame = _topSnapEndFrame;
+		_botSnapView.frame = _botSnapEndFrame;
+		_topSnapView.alpha = 0.f;
+		[context.containerView addSubview: _topSnapView];
+		[context.containerView addSubview: _botSnapView];
+		homeView.alpha = 0;
+		
+		// animate
+		[UIView animateKeyframesWithDuration: MTAnimatorDuration
+			delay: 0.f
+			options: 0
+			animations:
+			^{
+				[UIView addKeyframeWithRelativeStartTime: 0.f relativeDuration: 0.6f animations:^{
+					_topSnapView.alpha = 1.f;
+				}];
+				
+				[UIView addKeyframeWithRelativeStartTime: 0.6f relativeDuration: 0.4 animations:^{
+					_topSnapView.frame = _topSnapStartFrame;
+					_botSnapView.frame = _botSnapStartFrame;
+				}];
+			}
+			completion:
+			^(BOOL finished){
+				[_topSnapView removeFromSuperview];
+				[_botSnapView removeFromSuperview];
+				[locationSnap removeFromSuperview];
+				homeView.alpha = 1.f;
+				[context completeTransition: finished];
+			}];
+	}
+	
 }
 
 @end  // @implementation MTHomeLocationAnimator
