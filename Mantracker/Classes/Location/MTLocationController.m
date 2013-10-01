@@ -1,10 +1,17 @@
 #import "MTLocationController.h"
 
 
-#pragma mark Internal Interface
+#pragma mark Constants
+
+#define MTFaceVelocityMax           2.f
+#define MTFaceVelocityMultiplier    0.005f
+
+
+#pragma mark - Internal Interface
 
 @interface MTLocationController ()
 {
+    @private __strong UIDynamicAnimator *_dynamicAnimator;
     @private CGPoint _faceStartLocation;
     @private CGPoint _faceOffset;
 }
@@ -17,6 +24,7 @@
 
 #pragma mark - Methods
 
+- (void)beginFaceDynamicWithVelocity: (CGPoint)velocity;
 - (IBAction)onFacePan: (UIGestureRecognizer *)recognizer;
 
 
@@ -60,7 +68,51 @@
 
 #pragma mark - Helper Methods
 
-- (IBAction)onFacePan: (UIGestureRecognizer *)recognizer
+- (void)beginFaceDynamicWithVelocity: (CGPoint)velocity
+{
+    // stop previous dynamics (if any)
+    if (_dynamicAnimator != nil)
+    {
+        [_dynamicAnimator removeAllBehaviors];
+        _dynamicAnimator = nil;
+    }
+
+    // create animator
+    _dynamicAnimator = [[UIDynamicAnimator alloc]
+        initWithReferenceView: self.view];
+
+    // TODO: make gravity responsive to accelerometer or motion effects
+    // add gravity
+    UIGravityBehavior *gravity = [[UIGravityBehavior alloc]
+        initWithItems: @[_faceImage ]];
+    [_dynamicAnimator addBehavior: gravity];
+    
+    // add collision components
+    UICollisionBehavior *collision = [[UICollisionBehavior alloc]
+        initWithItems: @[ _faceImage ]];
+    [collision addBoundaryWithIdentifier: @"title"
+        forPath: [UIBezierPath bezierPathWithRect: _titleLabel.frame]];
+    collision.translatesReferenceBoundsIntoBoundary = YES;
+    [_dynamicAnimator addBehavior: collision];
+
+    // normalize and clamp velocity
+    velocity.x = MAX(-MTFaceVelocityMax, MIN(MTFaceVelocityMax,
+        velocity.x * MTFaceVelocityMultiplier));
+    velocity.y = MAX(-MTFaceVelocityMax, MIN(MTFaceVelocityMax,
+        velocity.y * MTFaceVelocityMultiplier));
+
+    // add push
+    UIPushBehavior *push = [[UIPushBehavior alloc]
+        initWithItems: @[_faceImage]
+        mode: UIPushBehaviorModeInstantaneous];
+    push.pushDirection = CGVectorMake(velocity.x, velocity.y);
+    [_dynamicAnimator addBehavior: push];
+    
+    NSLog(@"started face animation with velocity: (%.2f, %.2f)",
+        velocity.x, velocity.y);
+}
+
+- (IBAction)onFacePan: (UIPanGestureRecognizer *)recognizer
 {
     // handle gesture
     switch (recognizer.state)
@@ -98,6 +150,12 @@
 
         case UIGestureRecognizerStateEnded:
         {
+            // determine velocity
+            CGPoint velocity = [recognizer velocityInView: recognizer.view];
+            
+            // start animating based on current velocity
+            [self beginFaceDynamicWithVelocity: velocity];
+            
             break;
         }
 
