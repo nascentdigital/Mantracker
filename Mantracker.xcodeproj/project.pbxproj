@@ -10,6 +10,11 @@
 		46C963AA17FA259600686A7F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 46C963A917FA259600686A7F /* Main.storyboard */; };
 		46C963AD17FA2C6500686A7F /* MTDrawerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46C963AC17FA2C6500686A7F /* MTDrawerController.m */; };
 		46C963B017FA50B400686A7F /* MTDrawerTransitionAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 46C963AF17FA50B400686A7F /* MTDrawerTransitionAnimator.m */; };
+		FBE0FEE917FB2B5100F42D40 /* arrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FBE0FEE417FB2B5100F42D40 /* arrow@2x.png */; };
+		FBE0FEEA17FB2B5100F42D40 /* bar-pulldown@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FBE0FEE517FB2B5100F42D40 /* bar-pulldown@2x.png */; };
+		FBE0FEEB17FB2B5100F42D40 /* heart@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FBE0FEE617FB2B5100F42D40 /* heart@2x.png */; };
+		FBE0FEEC17FB2B5100F42D40 /* man-icon-large@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FBE0FEE717FB2B5100F42D40 /* man-icon-large@2x.png */; };
+		FBE0FEED17FB2B5100F42D40 /* man-icon-small@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FBE0FEE817FB2B5100F42D40 /* man-icon-small@2x.png */; };
 		FBF26CEB17F8B7E60023D29C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26CEA17F8B7E60023D29C /* Foundation.framework */; };
 		FBF26CED17F8B7E60023D29C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26CEC17F8B7E60023D29C /* CoreGraphics.framework */; };
 		FBF26CEF17F8B7E60023D29C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26CEE17F8B7E60023D29C /* UIKit.framework */; };
@@ -47,6 +52,11 @@
 		46C963AC17FA2C6500686A7F /* MTDrawerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTDrawerController.m; sourceTree = "<group>"; };
 		46C963AE17FA50B300686A7F /* MTDrawerTransitionAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTDrawerTransitionAnimator.h; sourceTree = "<group>"; };
 		46C963AF17FA50B400686A7F /* MTDrawerTransitionAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTDrawerTransitionAnimator.m; sourceTree = "<group>"; };
+		FBE0FEE417FB2B5100F42D40 /* arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow@2x.png"; sourceTree = "<group>"; };
+		FBE0FEE517FB2B5100F42D40 /* bar-pulldown@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bar-pulldown@2x.png"; sourceTree = "<group>"; };
+		FBE0FEE617FB2B5100F42D40 /* heart@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "heart@2x.png"; sourceTree = "<group>"; };
+		FBE0FEE717FB2B5100F42D40 /* man-icon-large@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "man-icon-large@2x.png"; sourceTree = "<group>"; };
+		FBE0FEE817FB2B5100F42D40 /* man-icon-small@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "man-icon-small@2x.png"; sourceTree = "<group>"; };
 		FBF26CE717F8B7E60023D29C /* Mantracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mantracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBF26CEA17F8B7E60023D29C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FBF26CEC17F8B7E60023D29C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -103,6 +113,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FBE0FEE217FB2B5100F42D40 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FBE0FEE317FB2B5100F42D40 /* Images */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		FBE0FEE317FB2B5100F42D40 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				FBE0FEE417FB2B5100F42D40 /* arrow@2x.png */,
+				FBE0FEE517FB2B5100F42D40 /* bar-pulldown@2x.png */,
+				FBE0FEE617FB2B5100F42D40 /* heart@2x.png */,
+				FBE0FEE717FB2B5100F42D40 /* man-icon-large@2x.png */,
+				FBE0FEE817FB2B5100F42D40 /* man-icon-small@2x.png */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
 		FBF26CDE17F8B7E60023D29C = {
 			isa = PBXGroup;
 			children = (
@@ -138,6 +168,7 @@
 			children = (
 				FBF26D1F17F8BA280023D29C /* Classes */,
 				FBF26D2817F8BA3B0023D29C /* Views */,
+				FBE0FEE217FB2B5100F42D40 /* Resources */,
 				FBF26D0217F8B7E60023D29C /* Images.xcassets */,
 				FBF26CF117F8B7E60023D29C /* Supporting Files */,
 			);
@@ -301,8 +332,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FBE0FEE917FB2B5100F42D40 /* arrow@2x.png in Resources */,
+				FBE0FEEC17FB2B5100F42D40 /* man-icon-large@2x.png in Resources */,
+				FBE0FEED17FB2B5100F42D40 /* man-icon-small@2x.png in Resources */,
 				46C963AA17FA259600686A7F /* Main.storyboard in Resources */,
 				FBF26D0317F8B7E60023D29C /* Images.xcassets in Resources */,
+				FBE0FEEB17FB2B5100F42D40 /* heart@2x.png in Resources */,
+				FBE0FEEA17FB2B5100F42D40 /* bar-pulldown@2x.png in Resources */,
 				FBF26CF517F8B7E60023D29C /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

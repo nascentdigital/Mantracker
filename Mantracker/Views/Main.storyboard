@@ -102,8 +102,16 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="28"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="man-icon-large.png" translatesAutoresizingMaskIntoConstraints="NO" id="z5V-Dg-bsi">
+                                <rect key="frame" x="250" y="66" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="42A-Su-LE6" appends="YES" id="Bs6-pS-at3"/>
+                        </connections>
                     </view>
                     <navigationItem key="navigationItem" title="Mantracker" id="QSM-Xc-FK9"/>
                     <connections>
@@ -111,6 +119,12 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="06b-8u-rq9" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="42A-Su-LE6">
+                    <connections>
+                        <action selector="onFacePan:" destination="iaV-24-u4N" id="vcH-ci-5HT"/>
+                        <outlet property="delegate" destination="iaV-24-u4N" id="xry-HR-fzp"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="928" y="24"/>
         </scene>
@@ -145,6 +159,9 @@
             <point key="canvasLocation" x="442" y="-684"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="man-icon-large.png" width="50" height="50"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

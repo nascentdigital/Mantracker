@@ -4,6 +4,7 @@
 #pragma mark Class Declaration
 
 @interface MTLocationController : UIViewController
+    <UIGestureRecognizerDelegate>
 
 #pragma mark - Properties
 
