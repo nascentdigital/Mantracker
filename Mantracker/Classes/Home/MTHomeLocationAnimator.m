@@ -7,8 +7,7 @@
 #pragma mark Constants
 
 #define MTAnimatorDuration 2.f
-#define CELL_SPLIT_YOFFSET 120
-
+#define CELL_SPLIT_YOFFSET 50
 
 #pragma mark - Internal Interface
 
@@ -55,10 +54,10 @@
     // set area we want to snapshot
 	CGRect topSnapshotFrame = CGRectMake(
 		0, 0,
-		homeView.frame.size.width, cell.frame.origin.y + CELL_SPLIT_YOFFSET);
+		homeView.frame.size.width, cellFrame.origin.y + CELL_SPLIT_YOFFSET);
 
 	CGRect botSnapshotFrame = CGRectMake(
-		0, cell.frame.origin.y + CELL_SPLIT_YOFFSET,
+		0, cellFrame.origin.y + CELL_SPLIT_YOFFSET,
 		homeView.frame.size.width,
 		homeView.frame.size.height - topSnapshotFrame.size.height);
 		
@@ -92,7 +91,9 @@
 		^{
 			[UIView addKeyframeWithRelativeStartTime: 0.f relativeDuration: 0.3 animations:^{
 				topSnapshot.frame = CGRectMake(
-					0, -topSnapshot.frame.size.height + CELL_SPLIT_YOFFSET,
+					0, -topSnapshot.frame.size.height + CELL_SPLIT_YOFFSET
+						+ locationController.navigationController.navigationBar.frame.size.height
+						+ locationController.navigationController.navigationBar.frame.origin.y,
 					topSnapshot.frame.size.width, topSnapshot.frame.size.height);
 					
 				bottomSnapshot.frame = CGRectMake(0, homeView.frame.size.height,

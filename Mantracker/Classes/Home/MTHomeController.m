@@ -34,38 +34,21 @@
     if ((self = [super initWithCoder: decoder]) != nil)
     {
         // initialize locations
-		UIImage *iconImage = [UIImage imageNamed: @"home"];
-		_locations = [NSMutableArray arrayWithObjects:
-			[MTLocation locationWithName: @"My place" image: iconImage],
-			[MTLocation locationWithName: @"His place" image: iconImage],
-			[MTLocation locationWithName: @"My office" image: iconImage],
-			[MTLocation locationWithName: @"His office" image: iconImage],
-			[MTLocation locationWithName: @"His parents" image: iconImage],
-			[MTLocation locationWithName: @"Mike's house" image: iconImage],
-			nil];
+		UIImage *image = [UIImage imageNamed: @"heart"];
+        _locations = [NSMutableArray arrayWithObjects:
+            [MTLocation locationWithName: @"My place" image: image],
+            [MTLocation locationWithName: @"His place" image: image],
+            [MTLocation locationWithName: @"My office" image: image],
+            [MTLocation locationWithName: @"His office" image: image],
+            [MTLocation locationWithName: @"His parents" image: image],
+            [MTLocation locationWithName: @"Mike's house" image: image],
+            nil];
     }
     
     // return instance
     return self;
 }
 
-- (void) viewDidLoad
-{
-//	// create upper and lower snapshots
-//	UIView *bottomSnapshot = [self.view resizableSnapshotViewFromRect: CGRectMake(
-//			0, self.view.bounds.size.height/2,
-//			self.view.bounds.size.width,
-//			self.view.bounds.size.height/2)
-//		afterScreenUpdates: YES withCapInsets: UIEdgeInsetsZero];
-//		
-//	UIView *topSnapshot = [self.view resizableSnapshotViewFromRect: CGRectMake(
-//			0, 0,
-//			self.view.bounds.size.width,
-//			self.view.bounds.size.height/2)
-//		afterScreenUpdates: YES withCapInsets: UIEdgeInsetsZero];
-		
-//	[self.view addSubview: topSnapshot];
-}
 
 #pragma mark - Overridden Methods
 
