@@ -114,6 +114,36 @@
             </objects>
             <point key="canvasLocation" x="928" y="24"/>
         </scene>
+        <!--Drawer Controller-->
+        <scene sceneID="U5F-XE-OvH">
+            <objects>
+                <viewController storyboardIdentifier="MTDrawerControllerID" useStoryboardIdentifierAsRestorationIdentifier="YES" id="B3a-1O-mEY" customClass="MTDrawerController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ceE-ns-3EJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="ZE9-6M-E4Z"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="i9c-Ym-RHb">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6LD-K4-scG">
+                                <rect key="frame" x="137" y="532" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="view" destination="i9c-Ym-RHb" id="tdy-a2-ApV"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="P3z-OB-I2C" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="442" y="-684"/>
+        </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

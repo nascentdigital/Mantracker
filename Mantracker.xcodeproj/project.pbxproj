@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		46C963AA17FA259600686A7F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 46C963A917FA259600686A7F /* Main.storyboard */; };
+		46C963AD17FA2C6500686A7F /* MTDrawerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 46C963AC17FA2C6500686A7F /* MTDrawerController.m */; };
+		46C963B017FA50B400686A7F /* MTDrawerTransitionAnimator.m in Sources */ = {isa = PBXBuildFile; fileRef = 46C963AF17FA50B400686A7F /* MTDrawerTransitionAnimator.m */; };
 		FBF26CEB17F8B7E60023D29C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26CEA17F8B7E60023D29C /* Foundation.framework */; };
 		FBF26CED17F8B7E60023D29C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26CEC17F8B7E60023D29C /* CoreGraphics.framework */; };
 		FBF26CEF17F8B7E60023D29C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF26CEE17F8B7E60023D29C /* UIKit.framework */; };
@@ -41,6 +43,10 @@
 
 /* Begin PBXFileReference section */
 		46C963A917FA259600686A7F /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		46C963AB17FA2C6500686A7F /* MTDrawerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTDrawerController.h; sourceTree = "<group>"; };
+		46C963AC17FA2C6500686A7F /* MTDrawerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTDrawerController.m; sourceTree = "<group>"; };
+		46C963AE17FA50B300686A7F /* MTDrawerTransitionAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTDrawerTransitionAnimator.h; sourceTree = "<group>"; };
+		46C963AF17FA50B400686A7F /* MTDrawerTransitionAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTDrawerTransitionAnimator.m; sourceTree = "<group>"; };
 		FBF26CE717F8B7E60023D29C /* Mantracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mantracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBF26CEA17F8B7E60023D29C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		FBF26CEC17F8B7E60023D29C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -191,6 +197,10 @@
 				FBF26D3317F8D55B0023D29C /* MTHomeLocationSegue.m */,
 				FBF26D3817F8F8AA0023D29C /* MTHomeLocationAnimator.h */,
 				FBF26D3917F8F8AA0023D29C /* MTHomeLocationAnimator.m */,
+				46C963AB17FA2C6500686A7F /* MTDrawerController.h */,
+				46C963AC17FA2C6500686A7F /* MTDrawerController.m */,
+				46C963AE17FA50B300686A7F /* MTDrawerTransitionAnimator.h */,
+				46C963AF17FA50B400686A7F /* MTDrawerTransitionAnimator.m */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -314,7 +324,9 @@
 			files = (
 				FBF26D3417F8D55B0023D29C /* MTHomeLocationSegue.m in Sources */,
 				FBF26D2717F8BA280023D29C /* MTAppDelegate.m in Sources */,
+				46C963AD17FA2C6500686A7F /* MTDrawerController.m in Sources */,
 				FBF26D2B17F8BB3D0023D29C /* MTLocation.m in Sources */,
+				46C963B017FA50B400686A7F /* MTDrawerTransitionAnimator.m in Sources */,
 				FBF26D2617F8BA280023D29C /* MTHomeController.m in Sources */,
 				FBF26D3117F8C66B0023D29C /* MTLocationController.m in Sources */,
 				FBF26D3717F8EEF80023D29C /* MTNavigationDelegate.m in Sources */,
