@@ -9,6 +9,7 @@
 #import "MTDrawerTransitionAnimator.h"
 #import "MTDrawerController.h"
 #import "MTHomeController.h"
+#import "UIImage+ImageEffects.h"
 
 
 @interface MTDrawerTransitionAnimator()
@@ -28,6 +29,7 @@
 @property (nonatomic, strong) UIDynamicItemBehavior *bodyBehavior;
 @property (nonatomic, strong) UICollisionBehavior *collisionBehavior;
 @property (nonatomic, strong) UIAttachmentBehavior *attachBehavior;
+@property (nonatomic, strong) UIGravityBehavior *gravityBehavior;
 
 @property (nonatomic, weak) UIView *containerView;
 @property (nonatomic, weak) UIView *dynamicView;
@@ -70,7 +72,12 @@
 }
 
 
-#pragma mark
+#pragma mark - UIViewControllerAnimatedTransitioning Methods
+
+- (void)animationEnded: (BOOL) transitionCompleted;
+{
+    _transitionContext = nil;
+}
 
 - (NSTimeInterval)transitionDuration:
     (id<UIViewControllerContextTransitioning>)transitionContext
@@ -102,6 +109,9 @@
             [transitionContext completeTransition: cancelled == NO];
     }];
 }
+
+
+#pragma mark - UIViewControllerInteractiveTransitioning Methods
 
 - (void)startInteractiveTransition: (id<UIViewControllerContextTransitioning>)transitionContext
 {
@@ -138,7 +148,7 @@
     }
     else
     {
-        toVC.view.frame = _toEndFrame;
+        toVC.view.frame = [transitionContext finalFrameForViewController: toVC];
         [containerView insertSubview: toVC.view
             belowSubview: fromVC.view];
         _startingCenter = fromVC.view.center;
@@ -151,6 +161,11 @@
 
 - (BOOL)gestureRecognizerShouldBegin: (UIGestureRecognizer *)recognizer
 {
+    if (_transitionContext != nil)
+    {
+        return NO;
+    }
+
     CGPoint point =  [recognizer locationInView:
         self.homeController.navigationController.view];
     CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
@@ -223,7 +238,7 @@
             self.animator.delegate = self;
             
             self.cancelled = state == UIGestureRecognizerStateCancelled
-                || ABS(translation.y) < height * 0.4f;
+                || ABS(translation.y) < height * 0.3f;
             
             self.bodyBehavior = [[UIDynamicItemBehavior alloc]
                 init];
@@ -251,6 +266,10 @@
             self.attachBehavior.damping = .1;
             self.attachBehavior.frequency = 3.0;
             self.attachBehavior.length = .5 * frame.size.height;
+            
+            self.gravityBehavior = [[UIGravityBehavior alloc]
+                initWithItems: @[dynamicView]];
+            [self.gravityBehavior setMagnitude: 3.f];
             
             [self addChildBehavior: self.attachBehavior];
             [self addChildBehavior: self.collisionBehavior];
@@ -281,7 +300,7 @@
     if(velocity.y < .5
         && [[animator behaviors] count] > 0)
     {
-        NSLog(@"complete");
+        NSLog(@"complete %d", self.isCancelled == NO);
         if(self.isCancelled)
             [self.transitionContext cancelInteractiveTransition];
         else
@@ -301,25 +320,19 @@
 
 - (void)MT_applyBlur
 {
-//        CGSize size = self.homeController.view.frame.size;
-////        size.height += self.homeController.view.frame.origin.y;
-//        UIGraphicsBeginImageContextWithOptions(size, NO, 0.f);
-//        
-//        [self.homeController.navigationController.view drawViewHierarchyInRect: CGRectMake(0.f, self.homeController.view.frame.origin.y, size.width, size.height) afterScreenUpdates: NO];
-//        
-//        UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
-//        UIGraphicsEndImageContext();
-//        
-//        // blur the UIImage
-//        CIImage *imageToBlur = [CIImage imageWithCGImage:viewImage.CGImage];
-//        CIFilter *gaussianBlurFilter = [CIFilter filterWithName: @"CIGaussianBlur"];
-//        [gaussianBlurFilter setValue:imageToBlur forKey: @"inputImage"];
-//        [gaussianBlurFilter setValue:[NSNumber numberWithFloat: 10] forKey: @"inputRadius"]; //change number to increase/decrease blur
-//        CIImage *resultImage = [gaussianBlurFilter valueForKey: @"outputImage"];
-// 
-//        // create UIImage from filtered image
-//        _blurredImage = [[UIImage alloc] initWithCIImage:resultImage];
-//        self.homeController.drawerController.bkgImage.image = _blurredImage;
+    CGSize size = self.homeController.view.frame.size;
+    size.height += self.homeController.view.frame.origin.y;
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0.f);
+    
+    [self.homeController.navigationController.view drawViewHierarchyInRect: CGRectMake(0.f, self.homeController.view.frame.origin.y, size.width, size.height) afterScreenUpdates: NO];
+    
+    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    // blur the UIImage
+    _blurredImage = [viewImage applyLightEffect];
+
+    self.homeController.drawerController.bkgImage.image = _blurredImage;
 }
 
 @end
