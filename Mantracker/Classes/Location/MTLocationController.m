@@ -182,6 +182,9 @@
     {
         case UIGestureRecognizerStateBegan:
         {
+            // cancel any previous "snap back"
+            [self cancelFaceDynamics];
+        
             // capture relative offset on drag start
             CGPoint location = [recognizer locationOfTouch: 0
                 inView: recognizer.view];
