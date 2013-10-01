@@ -24,7 +24,9 @@
 - (void)bindToLocation: (MTLocation *)location
 {
     _titleLabel.text = location.name;
+	_backgroundImage.image = location.image;
 }
+
 
 
 @end  // @implementation MTHomeLocationCell

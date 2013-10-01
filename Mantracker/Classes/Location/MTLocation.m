@@ -9,12 +9,21 @@
 #pragma mark - Public Methods
 
 + (id)locationWithName: (NSString *)name
+	image:(UIImage *)image
 {
     MTLocation *location = [[MTLocation alloc]
         init];
     location.name = name;
+	location.image = image;
     return location;
 }
 
++ (id) locationWithName:(NSString *)name
+{
+    MTLocation *location = [[MTLocation alloc]
+        init];
+    location.name = name;
+	return location;
+}
 
 @end  // @implementation MTLocation

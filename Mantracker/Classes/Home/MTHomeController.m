@@ -34,20 +34,38 @@
     if ((self = [super initWithCoder: decoder]) != nil)
     {
         // initialize locations
-        _locations = [NSMutableArray arrayWithObjects:
-            [MTLocation locationWithName: @"My place"],
-            [MTLocation locationWithName: @"His place"],
-            [MTLocation locationWithName: @"My office"],
-            [MTLocation locationWithName: @"His office"],
-            [MTLocation locationWithName: @"His parents"],
-            [MTLocation locationWithName: @"Mike's house"],
-            nil];
+		UIImage *iconImage = [UIImage imageNamed: @"home"];
+		_locations = [NSMutableArray arrayWithObjects:
+			[MTLocation locationWithName: @"My place" image: iconImage],
+			[MTLocation locationWithName: @"His place" image: iconImage],
+			[MTLocation locationWithName: @"My office" image: iconImage],
+			[MTLocation locationWithName: @"His office" image: iconImage],
+			[MTLocation locationWithName: @"His parents" image: iconImage],
+			[MTLocation locationWithName: @"Mike's house" image: iconImage],
+			nil];
     }
     
     // return instance
     return self;
 }
 
+- (void) viewDidLoad
+{
+//	// create upper and lower snapshots
+//	UIView *bottomSnapshot = [self.view resizableSnapshotViewFromRect: CGRectMake(
+//			0, self.view.bounds.size.height/2,
+//			self.view.bounds.size.width,
+//			self.view.bounds.size.height/2)
+//		afterScreenUpdates: YES withCapInsets: UIEdgeInsetsZero];
+//		
+//	UIView *topSnapshot = [self.view resizableSnapshotViewFromRect: CGRectMake(
+//			0, 0,
+//			self.view.bounds.size.width,
+//			self.view.bounds.size.height/2)
+//		afterScreenUpdates: YES withCapInsets: UIEdgeInsetsZero];
+		
+//	[self.view addSubview: topSnapshot];
+}
 
 #pragma mark - Overridden Methods
 
