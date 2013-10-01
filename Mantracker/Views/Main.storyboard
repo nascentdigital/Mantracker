@@ -29,18 +29,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="AwC-ti-Et8">
-                            <size key="itemSize" width="100" height="100"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="AwC-ti-Et8" customClass="MTHomeLocationLayout">
+                            <size key="itemSize" width="319" height="100"/>
                             <size key="headerReferenceSize" width="0.0" height="15"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
                         <cells>
                             <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MTHomeLocationCell" id="lmS-vb-k2U" customClass="MTHomeLocationCell">
-                                <rect key="frame" x="0.0" y="79" width="100" height="100"/>
+                                <rect key="frame" x="0.0" y="79" width="320" height="100"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                    <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="100"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eOM-o9-n1f" userLabel="background">
@@ -59,7 +59,7 @@
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <size key="customSize" width="100" height="100"/>
+                                <size key="customSize" width="320" height="100"/>
                                 <connections>
                                     <outlet property="backgroundImage" destination="eOM-o9-n1f" id="5TC-Bh-TsY"/>
                                     <outlet property="titleLabel" destination="MVH-1g-CEQ" id="yn0-CF-Tlt"/>
@@ -89,8 +89,8 @@
             <objects>
                 <viewController id="iaV-24-u4N" customClass="MTLocationController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="6kR-UQ-Iwn"/>
-                        <viewControllerLayoutGuide type="bottom" id="isr-sf-l65"/>
+                        <viewControllerLayoutGuide type="top" id="dvY-7G-YBW"/>
+                        <viewControllerLayoutGuide type="bottom" id="qsA-2s-bvA"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="Vyk-Fw-kQj">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
@@ -133,24 +133,37 @@
             <objects>
                 <viewController storyboardIdentifier="MTDrawerControllerID" useStoryboardIdentifierAsRestorationIdentifier="YES" id="B3a-1O-mEY" customClass="MTDrawerController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="ceE-ns-3EJ"/>
-                        <viewControllerLayoutGuide type="bottom" id="ZE9-6M-E4Z"/>
+                        <viewControllerLayoutGuide type="top" id="bAc-R8-HcA"/>
+                        <viewControllerLayoutGuide type="bottom" id="SXq-SS-2g5"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="i9c-Ym-RHb">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="043-ug-Y0B">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6LD-K4-scG">
                                 <rect key="frame" x="137" y="532" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="Button">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Man Metrics" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K2X-Vk-y0q">
+                                <rect key="frame" x="108" y="20" width="104" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="bkgImage" destination="043-ug-Y0B" id="mZt-Mc-WyK"/>
                         <outlet property="view" destination="i9c-Ym-RHb" id="tdy-a2-ApV"/>
                     </connections>
                 </viewController>

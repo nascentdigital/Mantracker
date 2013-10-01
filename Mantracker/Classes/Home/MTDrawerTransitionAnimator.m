@@ -16,6 +16,7 @@
     @private CGRect _toBeginFrame;
     @private CGRect _toEndFrame;
     @private CGPoint _startingCenter;
+    @private UIImage *_blurredImage;
 }
 
 @property (nonatomic, strong) id<UIViewControllerContextTransitioning>transitionContext;
@@ -30,6 +31,8 @@
 
 @property (nonatomic, weak) UIView *containerView;
 @property (nonatomic, weak) UIView *dynamicView;
+
+- (void)MT_applyBlur;
 
 @end
 
@@ -125,6 +128,9 @@
     
     if ([toVC isKindOfClass: [MTDrawerController class]])
     {
+        // apply blur
+//        [self MT_applyBlur];
+    
         toVC.view.frame = _toBeginFrame;
         [containerView addSubview: toVC.view];
         _startingCenter = toVC.view.center;
@@ -132,6 +138,7 @@
     }
     else
     {
+        toVC.view.frame = _toEndFrame;
         [containerView insertSubview: toVC.view
             belowSubview: fromVC.view];
         _startingCenter = fromVC.view.center;
@@ -216,7 +223,7 @@
             self.animator.delegate = self;
             
             self.cancelled = state == UIGestureRecognizerStateCancelled
-                || ABS(translation.y) < height * 0.5f;
+                || ABS(translation.y) < height * 0.4f;
             
             self.bodyBehavior = [[UIDynamicItemBehavior alloc]
                 init];
@@ -264,6 +271,7 @@
     }
 }
 
+
 #pragma mark - UIDynamicAnimatorDelegate Methods
 
 - (void)dynamicAnimatorDidPause: (UIDynamicAnimator *)animator
@@ -286,6 +294,32 @@
         [self removeChildBehavior: self.collisionBehavior];
         [self removeChildBehavior: self.bodyBehavior];
     }
+}
+
+
+#pragma mark - Private Methods
+
+- (void)MT_applyBlur
+{
+//        CGSize size = self.homeController.view.frame.size;
+////        size.height += self.homeController.view.frame.origin.y;
+//        UIGraphicsBeginImageContextWithOptions(size, NO, 0.f);
+//        
+//        [self.homeController.navigationController.view drawViewHierarchyInRect: CGRectMake(0.f, self.homeController.view.frame.origin.y, size.width, size.height) afterScreenUpdates: NO];
+//        
+//        UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+//        UIGraphicsEndImageContext();
+//        
+//        // blur the UIImage
+//        CIImage *imageToBlur = [CIImage imageWithCGImage:viewImage.CGImage];
+//        CIFilter *gaussianBlurFilter = [CIFilter filterWithName: @"CIGaussianBlur"];
+//        [gaussianBlurFilter setValue:imageToBlur forKey: @"inputImage"];
+//        [gaussianBlurFilter setValue:[NSNumber numberWithFloat: 10] forKey: @"inputRadius"]; //change number to increase/decrease blur
+//        CIImage *resultImage = [gaussianBlurFilter valueForKey: @"outputImage"];
+// 
+//        // create UIImage from filtered image
+//        _blurredImage = [[UIImage alloc] initWithCIImage:resultImage];
+//        self.homeController.drawerController.bkgImage.image = _blurredImage;
 }
 
 @end

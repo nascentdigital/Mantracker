@@ -10,4 +10,6 @@
 
 @interface MTDrawerController : UIViewController
 
+@property (nonatomic, weak) IBOutlet UIImageView *bkgImage;
+
 @end
