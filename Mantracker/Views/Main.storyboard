@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="tcA-9B-9NN">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12F37" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="tcA-9B-9NN">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
     </dependencies>
@@ -140,13 +140,16 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="043-ug-Y0B">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="043-ug-Y0B">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6LD-K4-scG">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6LD-K4-scG">
                                 <rect key="frame" x="135" y="533" width="50" height="35"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="UCr-55-ekl"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="12" maxX="0.0" maxY="0.0"/>
                                 <state key="normal" image="bar-pulldown.png">
@@ -156,15 +159,30 @@
                                     <action selector="MT_hideDrawer" destination="B3a-1O-mEY" eventType="touchUpInside" id="txB-f0-Zjc"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Man Metrics" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K2X-Vk-y0q">
-                                <rect key="frame" x="108" y="20" width="104" height="21"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Man Metrics" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K2X-Vk-y0q">
+                                <rect key="frame" x="108" y="40" width="104" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="d0k-DU-61d"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="SXq-SS-2g5" firstAttribute="top" secondItem="043-ug-Y0B" secondAttribute="bottom" id="4PY-08-nz1"/>
+                            <constraint firstAttribute="trailing" secondItem="6LD-K4-scG" secondAttribute="trailing" constant="135" id="D52-fr-L41"/>
+                            <constraint firstItem="043-ug-Y0B" firstAttribute="top" secondItem="i9c-Ym-RHb" secondAttribute="top" id="Gur-1q-qwX"/>
+                            <constraint firstItem="6LD-K4-scG" firstAttribute="leading" secondItem="i9c-Ym-RHb" secondAttribute="leading" constant="135" id="Idh-Br-hgk"/>
+                            <constraint firstAttribute="trailing" secondItem="043-ug-Y0B" secondAttribute="trailing" id="V9D-JB-7uk"/>
+                            <constraint firstAttribute="trailing" secondItem="K2X-Vk-y0q" secondAttribute="trailing" constant="108" id="XYY-Qe-31O"/>
+                            <constraint firstItem="SXq-SS-2g5" firstAttribute="top" secondItem="6LD-K4-scG" secondAttribute="bottom" id="aUN-Ar-z60"/>
+                            <constraint firstItem="K2X-Vk-y0q" firstAttribute="leading" secondItem="i9c-Ym-RHb" secondAttribute="leading" constant="108" id="t3O-BU-vAo"/>
+                            <constraint firstItem="043-ug-Y0B" firstAttribute="leading" secondItem="i9c-Ym-RHb" secondAttribute="leading" id="vgo-Eo-bNE"/>
+                            <constraint firstItem="K2X-Vk-y0q" firstAttribute="top" secondItem="bAc-R8-HcA" secondAttribute="bottom" constant="20" id="vkr-9D-gsx"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="bkgImage" destination="043-ug-Y0B" id="mZt-Mc-WyK"/>

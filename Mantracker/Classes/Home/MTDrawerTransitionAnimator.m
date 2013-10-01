@@ -12,7 +12,8 @@
 #import "UIImage+ImageEffects.h"
 #import "MTLocationController.h"
 
-#define USE_SIMPLE_ANIMATION 1
+#define USE_SIMPLE_ANIMATION 0
+#define LOWER_BOUNDS_FOR_DRAWER_BUTTON 50.f
 
 
 @interface MTDrawerTransitionAnimator()
@@ -244,7 +245,8 @@
         return YES;
     }
     else if ([visibleController isKindOfClass: [MTDrawerController class]]
-        && point.y > self.homeController.navigationController.view.frame.size.height - 50.f)
+        && point.y > self.homeController.navigationController.view.frame.size.height
+            - LOWER_BOUNDS_FOR_DRAWER_BUTTON)
     {
         NSLog(@"dismissing drawer");
         self.appearing = NO;
