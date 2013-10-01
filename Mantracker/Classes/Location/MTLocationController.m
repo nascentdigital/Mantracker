@@ -14,6 +14,7 @@
     @private __strong UIDynamicAnimator *_dynamicAnimator;
     @private CGPoint _faceStartLocation;
     @private CGPoint _faceOffset;
+    @private BOOL _facePositionTracking;
 }
 
 #pragma mark - Properties
@@ -24,7 +25,11 @@
 
 #pragma mark - Methods
 
-- (void)beginFaceDynamicWithVelocity: (CGPoint)velocity;
+- (void)beginFaceDynamicsWithVelocity: (CGPoint)velocity;
+- (void)cancelFaceDynamics;
+- (void)endFaceDynamics;
+
+
 - (IBAction)onFacePan: (UIGestureRecognizer *)recognizer;
 
 
@@ -65,17 +70,32 @@
     _titleLabel.text = _location.name;
 }
 
+- (void)observeValueForKeyPath: (NSString *)keyPath
+    ofObject: (id)object
+    change: (NSDictionary *)change
+    context: (void *)context
+{
+    // handle center changes
+    if (object == _faceImage)
+    {
+        // cancel any existing timer
+        [NSObject cancelPreviousPerformRequestsWithTarget: self
+            selector: @selector(endFaceDynamics)
+            object: nil];
+        
+        // restart timer
+        [self performSelector: @selector(endFaceDynamics)
+            withObject: nil
+            afterDelay: 1.0];
+    }
+}
 
 #pragma mark - Helper Methods
 
-- (void)beginFaceDynamicWithVelocity: (CGPoint)velocity
+- (void)beginFaceDynamicsWithVelocity: (CGPoint)velocity
 {
     // stop previous dynamics (if any)
-    if (_dynamicAnimator != nil)
-    {
-        [_dynamicAnimator removeAllBehaviors];
-        _dynamicAnimator = nil;
-    }
+    [self cancelFaceDynamics];
 
     // create animator
     _dynamicAnimator = [[UIDynamicAnimator alloc]
@@ -108,8 +128,51 @@
     push.pushDirection = CGVectorMake(velocity.x, velocity.y);
     [_dynamicAnimator addBehavior: push];
     
-    NSLog(@"started face animation with velocity: (%.2f, %.2f)",
-        velocity.x, velocity.y);
+    // start observing animations
+    [_faceImage addObserver: self
+        forKeyPath: @"center"
+        options: NSKeyValueObservingOptionNew
+        context: NULL];
+    _facePositionTracking = YES;
+}
+
+- (void)cancelFaceDynamics
+{
+    if (_dynamicAnimator != nil)
+    {
+        // cancel any existing timer
+        [NSObject cancelPreviousPerformRequestsWithTarget: self
+            selector: @selector(endFaceDynamics)
+            object: nil];
+
+        // stop observing
+        if (_facePositionTracking)
+        {
+            _facePositionTracking = NO;
+            [_faceImage removeObserver: self
+                forKeyPath: @"center"];
+        }
+    
+        // tear down animator
+        [_dynamicAnimator removeAllBehaviors];
+        _dynamicAnimator = nil;
+    }
+}
+
+- (void)endFaceDynamics
+{
+    // cancel any previous dynamics
+    [self cancelFaceDynamics];
+    
+    // create animator
+    _dynamicAnimator = [[UIDynamicAnimator alloc]
+        initWithReferenceView: self.view];
+
+    // add snap
+    UISnapBehavior *snap = [[UISnapBehavior alloc]
+        initWithItem: _faceImage
+        snapToPoint: _faceStartLocation];        
+    [_dynamicAnimator addBehavior: snap];
 }
 
 - (IBAction)onFacePan: (UIPanGestureRecognizer *)recognizer
@@ -154,7 +217,7 @@
             CGPoint velocity = [recognizer velocityInView: recognizer.view];
             
             // start animating based on current velocity
-            [self beginFaceDynamicWithVelocity: velocity];
+            [self beginFaceDynamicsWithVelocity: velocity];
             
             break;
         }
