@@ -5,6 +5,7 @@
 
 @interface MTLocationController ()
 {
+    @private CGPoint _faceStartLocation;
     @private CGPoint _faceOffset;
 }
 
@@ -49,6 +50,9 @@
     // call base implementation
     [super viewDidLoad];
     
+    // track initial face location
+    _faceStartLocation = _faceImage.center;
+    
     // initialize label with location
     _titleLabel.text = _location.name;
 }
@@ -58,21 +62,48 @@
 
 - (IBAction)onFacePan: (UIGestureRecognizer *)recognizer
 {
+    // handle gesture
     switch (recognizer.state)
     {
-case UIGestureRecognizerStateBegan:
-{
+        case UIGestureRecognizerStateBegan:
+        {
+            // capture relative offset on drag start
+            CGPoint location = [recognizer locationOfTouch: 0
+                inView: recognizer.view];
+            CGPoint faceCenter = _faceImage.center;
+            _faceOffset = CGPointMake(faceCenter.x - location.x,
+                faceCenter.y - location.y);
+            
+            break;
+        }
 
-    break;
-}
-default:
-break;
-}
-    CGPoint location = [recognizer locationOfTouch: 0
-        inView: recognizer.view];
-    location.x += _faceOffset.x;
-    location.y += _faceOffset.y;
-    _faceImage.center = location;
+        case UIGestureRecognizerStateChanged:
+        {
+            // determine touch location
+            CGPoint location = [recognizer locationOfTouch: 0
+                inView: recognizer.view];
+
+            // update face position (accounting for initial offset)
+            location.x += _faceOffset.x;
+            location.y += _faceOffset.y;
+            _faceImage.center = location;
+            
+            break;
+        }
+
+        case UIGestureRecognizerStateCancelled:
+        {
+            break;
+        }
+
+        case UIGestureRecognizerStateEnded:
+        {
+            break;
+        }
+
+        default:
+            break;
+    }
 }
 
 
@@ -87,19 +118,7 @@ break;
     
     // start tracking if face is touched
     BOOL faceTouched = CGRectContainsPoint(_faceImage.frame, location);
-    if (faceTouched)
-    {
-        CGPoint faceCenter = _faceImage.center;
-        _faceOffset = CGPointMake(faceCenter.x - location.x,
-            faceCenter.y - location.y);
-        return YES;
-    }
-    
-    // or cancel gesture recognizing
-    else
-    {
-        return NO;
-    }
+    return faceTouched;
 }
 
 

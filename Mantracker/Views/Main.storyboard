@@ -115,6 +115,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Mantracker" id="QSM-Xc-FK9"/>
                     <connections>
+                        <outlet property="faceImage" destination="z5V-Dg-bsi" id="ID5-qp-myb"/>
                         <outlet property="titleLabel" destination="QZX-8C-JU5" id="zEP-41-bge"/>
                     </connections>
                 </viewController>
