@@ -10,6 +10,7 @@
 #import "MTDrawerController.h"
 #import "MTHomeController.h"
 #import "UIImage+ImageEffects.h"
+#import "MTLocationController.h"
 
 
 @interface MTDrawerTransitionAnimator()
@@ -20,7 +21,11 @@
     @private UIImage *_blurredImage;
 }
 
+@property (nonatomic, weak) UIView *containerView;
+@property (nonatomic, weak) UIView *dynamicView;
+
 @property (nonatomic, strong) id<UIViewControllerContextTransitioning>transitionContext;
+@property (nonatomic, assign, getter = isInteractive) BOOL interactive;
 @property (nonatomic, assign, getter = isAppearing) BOOL appearing;
 @property (nonatomic, assign, getter = isCancelled) BOOL cancelled;
 @property (nonatomic, assign) float percentComplete;
@@ -30,9 +35,6 @@
 @property (nonatomic, strong) UICollisionBehavior *collisionBehavior;
 @property (nonatomic, strong) UIAttachmentBehavior *attachBehavior;
 @property (nonatomic, strong) UIGravityBehavior *gravityBehavior;
-
-@property (nonatomic, weak) UIView *containerView;
-@property (nonatomic, weak) UIView *dynamicView;
 
 - (void)MT_applyBlur;
 
@@ -62,13 +64,19 @@
 - (id <UIViewControllerInteractiveTransitioning>)interactionControllerForPresentation:
     (id <UIViewControllerAnimatedTransitioning>)animator
 {
-    return self;
+    if (self.isInteractive)
+        return self;
+    else
+        return nil;
 }
 
 - (id <UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:
     (id <UIViewControllerAnimatedTransitioning>)animator
 {
-    return self;
+    if (self.isInteractive)
+        return self;
+    else
+        return nil;
 }
 
 
@@ -76,7 +84,14 @@
 
 - (void)animationEnded: (BOOL) transitionCompleted;
 {
-    _transitionContext = nil;
+    // reset
+    self.transitionContext = nil;
+    self.interactive = NO;
+    self.appearing = NO;
+    self.percentComplete = 0.f;
+    self.containerView = nil;
+    self.dynamicView = nil;
+    self.cancelled = NO;
 }
 
 - (NSTimeInterval)transitionDuration:
@@ -89,25 +104,63 @@
 {
     NSLog(@"starting animation transtion");
     
-    UIViewController *fromVC = [transitionContext viewControllerForKey: UITransitionContextFromViewControllerKey];
-    UIViewController *toVC = [transitionContext viewControllerForKey: UITransitionContextToViewControllerKey];
+    _transitionContext = transitionContext;
+    UIViewController *fromVC = [transitionContext viewControllerForKey:
+        UITransitionContextFromViewControllerKey];
+    UIViewController *toVC = [transitionContext viewControllerForKey:
+        UITransitionContextToViewControllerKey];
     UIView *containerView = [transitionContext containerView];
+    CGSize containerViewSize = containerView.frame.size;
+    self.containerView = containerView;
     
-    [UIView animateWithDuration: [self transitionDuration: transitionContext] animations:^{
-        if (self.isAppearing)
+    if (self.isAppearing)
+    {
+        CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
+    
+        _toBeginFrame = CGRectMake(
+            0.f,
+            -containerViewSize.height + navigationBarFrame.origin.y + navigationBarFrame.size.height,
+            containerViewSize.width,
+            containerViewSize.height);
+        _toEndFrame = [transitionContext finalFrameForViewController: toVC];
+
+        
+        toVC.view.frame = _toBeginFrame;
+        [containerView addSubview: toVC.view];
+    }
+    else
+    {
+        CGRect toStart = [transitionContext initialFrameForViewController: toVC];
+        CGRect toEnd = [transitionContext finalFrameForViewController: toVC];
+        CGRect fromStart = [transitionContext initialFrameForViewController: fromVC];
+        CGRect fromEnd = [transitionContext finalFrameForViewController: fromVC];
+        
+        toVC.view.frame = [transitionContext initialFrameForViewController: fromVC];
+        fromVC.view.frame = [transitionContext initialFrameForViewController: fromVC];
+        
+        [containerView insertSubview: toVC.view
+            belowSubview: fromVC.view];
+    }
+    
+    [UIView animateWithDuration: [self transitionDuration: transitionContext]
+        animations: ^
         {
-            toVC.view.frame = _toEndFrame;
+            if (self.isAppearing)
+            {
+                toVC.view.frame = [transitionContext finalFrameForViewController: toVC];
+            }
+            else
+            {
+                [containerView insertSubview: toVC.view
+                    belowSubview: fromVC.view];
+                fromVC.view.frame = _toBeginFrame;
+            }
         }
-        else
+        completion: ^(BOOL finished)
         {
-            fromVC.view.frame = _toEndFrame;
-        }
-    } completion:^(BOOL finished) {
-       
-            BOOL cancelled = [[toVC transitionCoordinator]
-                isCancelled];
-            [transitionContext completeTransition: cancelled == NO];
-    }];
+            [transitionContext completeTransition: YES];
+            self.appearing = NO;
+        }];
 }
 
 
@@ -116,8 +169,10 @@
 - (void)startInteractiveTransition: (id<UIViewControllerContextTransitioning>)transitionContext
 {
     NSLog(@"starting interactive transtion");
+
     _transitionContext = transitionContext;
-    UIViewController *fromVC = [transitionContext viewControllerForKey: UITransitionContextFromViewControllerKey];
+    UIViewController *fromVC = [transitionContext viewControllerForKey:
+        UITransitionContextFromViewControllerKey];
     UIViewController *toVC = [transitionContext viewControllerForKey:
         UITransitionContextToViewControllerKey];
     UIView *containerView = [transitionContext containerView];
@@ -166,6 +221,8 @@
         return NO;
     }
 
+    self.interactive = YES;
+
     CGPoint point =  [recognizer locationInView:
         self.homeController.navigationController.view];
     CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
@@ -173,8 +230,9 @@
     UIViewController *visibleController =
         self.homeController.navigationController.visibleViewController;
             
-    if ([visibleController isKindOfClass: [MTHomeController class]]
-        && point.y < navigationBarFrame.origin.y + navigationBarFrame.size.height)
+    if (([visibleController isKindOfClass: [MTHomeController class]]
+        || [visibleController isKindOfClass: [MTLocationController class]])
+            && point.y < navigationBarFrame.origin.y + navigationBarFrame.size.height)
     {
         NSLog(@"presenting drawer");
         self.appearing = YES;
@@ -187,12 +245,37 @@
     {
         NSLog(@"dismissing drawer");
         self.appearing = NO;
-        [self.homeController.drawerController dismissViewControllerAnimated: YES
+        [self.homeController dismissViewControllerAnimated: YES
             completion: nil];
         return YES;
     }
     
     return NO;
+}
+
+
+#pragma mark - UIDynamicAnimatorDelegate Methods
+
+- (void)dynamicAnimatorDidPause: (UIDynamicAnimator *)animator
+{
+    NSLog(@"pause");
+    CGPoint velocity = [self.bodyBehavior linearVelocityForItem: self.dynamicView];
+    if(velocity.y < .5
+        && [[animator behaviors] count] > 0)
+    {
+        NSLog(@"complete %d", self.isCancelled == NO);
+        if(self.isCancelled)
+            [self.transitionContext cancelInteractiveTransition];
+        else
+            [self.transitionContext finishInteractiveTransition];
+        [self.transitionContext completeTransition: self.isCancelled == NO];
+    
+            
+        [self.dynamicAnimator removeAllBehaviors];
+        [self removeChildBehavior: self.attachBehavior];
+        [self removeChildBehavior: self.collisionBehavior];
+        [self removeChildBehavior: self.bodyBehavior];
+    }
 }
 
 
@@ -290,28 +373,21 @@
     }
 }
 
-
-#pragma mark - UIDynamicAnimatorDelegate Methods
-
-- (void)dynamicAnimatorDidPause: (UIDynamicAnimator *)animator
+- (void)showDrawer
 {
-    NSLog(@"pause");
-    CGPoint velocity = [self.bodyBehavior linearVelocityForItem: self.dynamicView];
-    if(velocity.y < .5
-        && [[animator behaviors] count] > 0)
+    self.appearing = YES;
+    [self.homeController presentViewController: self.homeController.drawerController
+        animated: YES
+        completion: nil];
+}
+
+- (void)hideDrawer
+{
+    if (self.percentComplete == 0.f)
     {
-        NSLog(@"complete %d", self.isCancelled == NO);
-        if(self.isCancelled)
-            [self.transitionContext cancelInteractiveTransition];
-        else
-            [self.transitionContext finishInteractiveTransition];
-        [self.transitionContext completeTransition: self.isCancelled == NO];
-    
-            
-        [self.dynamicAnimator removeAllBehaviors];
-        [self removeChildBehavior: self.attachBehavior];
-        [self removeChildBehavior: self.collisionBehavior];
-        [self removeChildBehavior: self.bodyBehavior];
+        self.appearing = NO;
+        [self.homeController dismissViewControllerAnimated: YES
+            completion: nil];
     }
 }
 

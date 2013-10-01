@@ -4,6 +4,7 @@
 #import "MTLocation.h"
 #import "MTDrawerController.h"
 #import "MTDrawerTransitionAnimator.h"
+#import "MTNavigationBar.h"
 
 
 #pragma mark Internal Interface
@@ -74,7 +75,14 @@
     
     // set the transition delegate on the drawer controller
     _drawerController.transitioningDelegate = _drawerTransitionAnimator;
-
+    
+    if ([self.navigationController.navigationBar isKindOfClass: [MTNavigationBar class]])
+    {
+        [((MTNavigationBar *)self.navigationController.navigationBar).centerButton
+            addTarget: _drawerTransitionAnimator
+            action: @selector(showDrawer)
+            forControlEvents: UIControlEventTouchUpInside];
+    }
 }
 
 - (NSInteger)collectionView: (UICollectionView *)collectionView

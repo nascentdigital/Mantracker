@@ -18,5 +18,7 @@
 @property (nonatomic, weak) MTHomeController *homeController;
 
 - (void)handleGesture: (UIPanGestureRecognizer *)recognizer;
+- (void)showDrawer;
+- (void)hideDrawer;
 
 @end

@@ -8,7 +8,10 @@
 
 #import "MTDrawerController.h"
 
+
 @interface MTDrawerController ()
+
+- (IBAction)MT_hideDrawer;
 
 @end
 
@@ -33,6 +36,18 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Private Methods
+
+- (IBAction)MT_hideDrawer
+{
+    NSLog(@"p %f", [self.transitionCoordinator percentComplete]);
+    if ([self.transitionCoordinator percentComplete] == 0)
+    {
+        [self dismissViewControllerAnimated: YES
+            completion: nil];
+    }
 }
 
 @end
