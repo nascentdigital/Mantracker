@@ -7,6 +7,7 @@
 //
 
 #import "MTDrawerController.h"
+#import "MTDrawerTransitionAnimator.h"
 
 
 @interface MTDrawerController ()
@@ -42,11 +43,9 @@
 
 - (IBAction)MT_hideDrawer
 {
-    NSLog(@"p %f", [self.transitionCoordinator percentComplete]);
-    if ([self.transitionCoordinator percentComplete] == 0)
+    if ([self.transitioningDelegate isKindOfClass: [MTDrawerTransitionAnimator class]])
     {
-        [self dismissViewControllerAnimated: YES
-            completion: nil];
+        [((MTDrawerTransitionAnimator *)self.transitioningDelegate) hideDrawer];
     }
 }
 

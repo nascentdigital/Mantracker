@@ -136,7 +136,7 @@
                         <viewControllerLayoutGuide type="top" id="bAc-R8-HcA"/>
                         <viewControllerLayoutGuide type="bottom" id="SXq-SS-2g5"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="i9c-Ym-RHb">
+                    <view key="view" clipsSubviews="YES" contentMode="scaleToFill" id="i9c-Ym-RHb">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
