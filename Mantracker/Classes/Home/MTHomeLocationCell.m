@@ -11,7 +11,6 @@
 
 @property (nonatomic, weak) IBOutlet UILabel *titleLabel;
 
-
 @end  // @interface MTHomeLocationCell ()
 
 
@@ -25,6 +24,7 @@
 {
     _titleLabel.text = location.name;
 	_backgroundImage.image = location.iconImage;
+	self.location = location;
 }
 
 

@@ -2,6 +2,19 @@
 
 #pragma mark Class Declaration
 
-@interface MTHomeLocationAnimator : NSObject<UIViewControllerAnimatedTransitioning>
+@class MTHomeController;
+
+@interface MTHomeLocationAnimator : UIPercentDrivenInteractiveTransition
+	<UIViewControllerAnimatedTransitioning,
+		UIGestureRecognizerDelegate,
+		UIViewControllerInteractiveTransitioning,
+		UIViewControllerTransitioningDelegate>
+
+
+@property (nonatomic, weak) MTHomeController *homeController;
+
+
+- (void) handlePinch: (UIPinchGestureRecognizer *) gesture;
+
 
 @end  // @interface MTHomeLocationAnimator

@@ -9,7 +9,7 @@
 #pragma mark - Properties
 
 @property (nonatomic, weak) IBOutlet UIImageView *backgroundImage;
-
+@property (nonatomic, strong) MTLocation *location;
 
 #pragma mark - Methods
 

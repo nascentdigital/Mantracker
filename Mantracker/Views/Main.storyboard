@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12F37" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="tcA-9B-9NN">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4510" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="tcA-9B-9NN">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3742"/>
     </dependencies>
@@ -80,13 +80,14 @@
                     </navigationItem>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fGn-Oe-Cel" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <pinchGestureRecognizer id="8ZX-Da-rKs"/>
             </objects>
             <point key="canvasLocation" x="428" y="24"/>
         </scene>
         <!--Location Controller - Mantracker-->
         <scene sceneID="GD3-Ju-jAy">
             <objects>
-                <viewController id="iaV-24-u4N" customClass="MTLocationController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="MTLocationControllerID" id="iaV-24-u4N" customClass="MTLocationController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="dvY-7G-YBW"/>
                         <viewControllerLayoutGuide type="bottom" id="qsA-2s-bvA"/>

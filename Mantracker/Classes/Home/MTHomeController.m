@@ -5,15 +5,16 @@
 #import "MTDrawerController.h"
 #import "MTDrawerTransitionAnimator.h"
 #import "MTNavigationBar.h"
+#import "MTHomeLocationAnimator.h"
 
 
 #pragma mark Internal Interface
 
 @interface MTHomeController ()
 {
-    @private NSMutableArray *_locations;
     @private UIPanGestureRecognizer *_panGestureRecognizer;
     @private MTDrawerTransitionAnimator *_drawerTransitionAnimator;
+	@private MTHomeLocationAnimator *_homeLocationAnimator;
 }
 
 
@@ -59,20 +60,27 @@
     // instantiate the drawer controller
     _drawerController = [self.storyboard instantiateViewControllerWithIdentifier: @"MTDrawerControllerID"];
 
-    // create the transition animator
+    // create the transition animators
     _drawerTransitionAnimator = [[MTDrawerTransitionAnimator alloc]
         init];
     _drawerTransitionAnimator.homeController = self;
-    
-    // set up pan gesture recognizer
+	_homeLocationAnimator = [[MTHomeLocationAnimator alloc] init];
+	_homeLocationAnimator.homeController = self;
+	
+    // set up gesture recognizers
     _panGestureRecognizer = [[UIPanGestureRecognizer alloc]
         initWithTarget: _drawerTransitionAnimator
         action: @selector(handleGesture:)];
     _drawerController.transitioningDelegate = _drawerTransitionAnimator;
     _panGestureRecognizer.delegate = _drawerTransitionAnimator;
+	
+	UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget: _homeLocationAnimator
+		action: @selector(handlePinch:)];
     
-    // add pan gesture recognizer
+    // add gesture recognizers
     [[UIApplication sharedApplication].delegate.window addGestureRecognizer: _panGestureRecognizer];
+	
+	[self.view addGestureRecognizer: pinchGesture];
     
     // set the transition delegate on the drawer controller
     _drawerController.transitioningDelegate = _drawerTransitionAnimator;
