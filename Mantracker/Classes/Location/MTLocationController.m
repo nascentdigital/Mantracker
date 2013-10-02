@@ -21,6 +21,11 @@
 
 @property (nonatomic, weak) IBOutlet UILabel *titleLabel;
 @property (nonatomic, weak) IBOutlet UIImageView *faceImage;
+@property (nonatomic, weak) IBOutlet UIImageView *cloud1Image;
+@property (nonatomic, weak) IBOutlet UIImageView *cloud2Image;
+@property (nonatomic, weak) IBOutlet UIImageView *checkInImage;
+@property (nonatomic, weak) IBOutlet UIImageView *avgTimeImage;
+@property (nonatomic, weak) IBOutlet UIImageView *noteImage;
 
 
 #pragma mark - Methods
@@ -68,6 +73,31 @@
     
     // initialize label with location
     _titleLabel.text = _location.name;
+}
+
+- (void) viewWillAppear:(BOOL)animated
+{
+	// animate clouds
+	[UIView animateWithDuration: 1.f
+		delay: 2.f
+		options: 0//UIViewAnimationOptionRepeat
+		animations:
+		^{
+			self.cloud1Image.frame = CGRectMake(0.f, self.cloud1Image.frame.origin.y, self.cloud1Image.frame.size.width, self.cloud1Image.frame.size.height);
+			self.cloud2Image.frame = CGRectMake(0.f, self.cloud2Image.frame.origin.y, self.cloud2Image.frame.size.width, self.cloud2Image.frame.size.height);
+			self.noteImage.frame = CGRectMake(100, 100, 200, 200);
+		}
+		completion:
+		^(BOOL finished){
+			if (!finished)
+			{
+				NSLog(@"not finished");
+			}
+			else
+			{
+				NSLog(@"finished");
+			}
+		}];
 }
 
 - (void)observeValueForKeyPath: (NSString *)keyPath

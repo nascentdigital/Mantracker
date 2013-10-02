@@ -35,15 +35,18 @@
     if ((self = [super initWithCoder: decoder]) != nil)
     {
         // initialize locations
-		UIImage *image = [UIImage imageNamed: @"heart"];
-        _locations = [NSMutableArray arrayWithObjects:
-            [MTLocation locationWithName: @"My place" image: image],
-            [MTLocation locationWithName: @"His place" image: image],
-            [MTLocation locationWithName: @"My office" image: image],
-            [MTLocation locationWithName: @"His office" image: image],
-            [MTLocation locationWithName: @"His parents" image: image],
-            [MTLocation locationWithName: @"Mike's house" image: image],
-            nil];
+			_locations = [NSMutableArray arrayWithObjects:
+			  [MTLocation locationWithName: @"My place"
+				image: [UIImage imageNamed: @"main-myplace"]],
+			  [MTLocation locationWithName: @"Kings Bar"
+				image: [UIImage imageNamed: @"main-kingsbar"]],
+			  [MTLocation locationWithName: @"Work"
+				image: [UIImage imageNamed: @"main-work"]],
+			  [MTLocation locationWithName: @"Mystery"
+				image: [UIImage imageNamed: @"main-mystery"]],
+			  [MTLocation locationWithName: @"Mike's"
+				image: [UIImage imageNamed: @"main-mikes"]],
+			  nil];
     }
     
     // return instance
