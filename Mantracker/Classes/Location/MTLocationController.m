@@ -93,7 +93,7 @@
 				animations:
 				^{
 					self.cloud1Image.frame = CGRectMake(
-						-40,
+						-90,
 						self.cloud1Image.frame.origin.y,
 						self.cloud1Image.frame.size.width,
 						self.cloud1Image.frame.size.height);
@@ -126,7 +126,7 @@
 				animations:
 				^{
 					self.cloud2Image.frame = CGRectMake(
-						-20,
+						-85,
 						self.cloud2Image.frame.origin.y,
 						self.cloud2Image.frame.size.width,
 						self.cloud2Image.frame.size.height);
