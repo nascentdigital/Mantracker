@@ -1,7 +1,5 @@
 #import "MTSettingsManager.h"
-
-
-#pragma mark Constants
+#include <libkern/OSAtomic.h>
 
 
 #pragma mark - Class Extension
@@ -13,7 +11,7 @@
 
 #pragma mark - Class Variables
 
-static MTSettingsManager *_sharedInstance;
+static MTSettingsManager *_sharedInstance = nil;
 static BOOL _classInitialized = NO;
 
 
@@ -38,9 +36,9 @@ static BOOL _classInitialized = NO;
 			if (_classInitialized == NO)
 			{
 				// initialize class variables
-                _sharedInstance = [[CCBookingManager alloc]
+                _sharedInstance = [[MTSettingsManager alloc]
                     init];
-					
+                
 				// close double-checked lock
 				OSMemoryBarrier();
 				_classInitialized = YES;
@@ -49,32 +47,14 @@ static BOOL _classInitialized = NO;
 	}
 }
 
-+ (id)allocWithZone: (NSZone *)zone
-{
-	// Because we are creating the shared instance in the +initialize method, 
-    // we can check if it exists here to know if we should alloc an instance of the class.
-	if (_sharedInstance == nil)
-	{
-		return [super allocWithZone: zone];
-	}
-	else
-	{
-	    return [self sharedInstance];
-	}
-}
-
 - (id)init
 {
-	// abort if base initializer fails
-	if ((self = [super init]) == nil)
-	{
-		return nil;
-	}
-	
-	// initialize instance variables
-	
-	// return initialized instance
-	return self;
+    if ((self = [super init]) != nil)
+    {
+        // initialize instance variables
+
+    }
+    return self;
 }
 
 

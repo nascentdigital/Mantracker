@@ -11,9 +11,8 @@
 #import "MTHomeController.h"
 #import "UIImage+ImageEffects.h"
 #import "MTLocationController.h"
+#import "MTSettingsManager.h"
 
-
-#define BLUR_BACKGROUND
 //#define USE_DEFAULT_TRANSITION
 
 #define UPPER_BOUNDS_FOR_DRAWER_BUTTON 0.f
@@ -80,22 +79,29 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     presentingController: (UIViewController *)presenting
     sourceController:(UIViewController *)source
 {
-#ifdef USE_DEFAULT_TRANSITION
-    return nil;
-#endif
-    self.appearing = YES;
-    return self;
+    if ([MTSettingsManager sharedInstance].customTransitions)
+    {
+        self.appearing = YES;
+        return self;
+    }
+    else
+    {
+        return nil;
+    }
 }
-
 
 - (id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:
     (UIViewController *)dismissed
 {
-#ifdef USE_DEFAULT_TRANSITION
-    return nil;
-#endif
-    self.appearing = NO;
-    return self;
+    if ([MTSettingsManager sharedInstance].customTransitions)
+    {
+        self.appearing = NO;
+        return self;
+    }
+    else
+    {
+        return nil;
+    }
 }
 
 - (id <UIViewControllerInteractiveTransitioning>)interactionControllerForPresentation:
@@ -540,10 +546,11 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             containerViewSize.height);
         _toEndFrame = [transitionContext finalFrameForViewController: toVC];
 
-#ifdef BLUR_BACKGROUND
-        // apply blur
-        [self MT_applyBlur];
-#endif
+        if ([MTSettingsManager sharedInstance].blurBackground)
+        {
+            // apply blur
+            [self MT_applyBlur];
+        }
     }
 }
 

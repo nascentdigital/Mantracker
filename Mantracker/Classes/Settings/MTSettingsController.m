@@ -7,10 +7,22 @@
 //
 
 #import "MTSettingsController.h"
+#import "MTSettingsManager.h"
+
+#pragma mark - Constants
+
+#define PARALLAX_TAG 100
+#define BLUR_TAG 200
+#define CUSTOM_TRANSITIONS_TAG 300
+#define INTERACTIVE_TRANSITIONS_TAG 400
+#define ENVIRONMENTAL_FEEDBAG_TAG 500
+#define LIFE_ANIMATIONS_TAG 600
+
 
 @interface MTSettingsController ()
 
 - (IBAction)MT_dismissSettings;
+- (IBAction)MT_changeSettings: (UISwitch *)sender;
 
 @end
 
@@ -29,6 +41,38 @@
 {
     [self dismissViewControllerAnimated: YES
         completion: nil];
+}
+
+
+- (IBAction)MT_changeSettings: (UISwitch *)sender
+{
+    MTSettingsManager *settingsManager = [MTSettingsManager sharedInstance];
+    switch (sender.tag)
+    {
+        case PARALLAX_TAG:
+            settingsManager.enableParallax = sender.on;
+        break;
+        
+        case BLUR_TAG:
+            settingsManager.blurBackground = sender.on;
+        break;
+        
+        case CUSTOM_TRANSITIONS_TAG:
+            settingsManager.customTransitions = sender.on;
+        break;
+        
+        case INTERACTIVE_TRANSITIONS_TAG:
+            settingsManager.interactiveTransitions = sender.on;
+        break;
+        
+        case ENVIRONMENTAL_FEEDBAG_TAG:
+            settingsManager.environmentalFeedback = sender.on;
+        break;
+        
+        case LIFE_ANIMATIONS_TAG:
+            settingsManager.lifeAnimations = sender.on;
+        break;
+    }
 }
 
 @end
