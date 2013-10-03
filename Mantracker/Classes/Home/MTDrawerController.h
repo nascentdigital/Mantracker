@@ -10,6 +10,6 @@
 
 @interface MTDrawerController : UIViewController
 
-@property (nonatomic, weak) IBOutlet UIImageView *bkgImage;
+- (void)useBlurredImage: (UIImage *)image;
 
 @end

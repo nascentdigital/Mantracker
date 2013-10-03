@@ -20,6 +20,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 @interface MTDrawerTransitionAnimator()
 {
+    @private CGFloat _navigationBarBottom;
     @private CGRect _toBeginFrame;
     @private CGRect _toEndFrame;
     @private UIImage *_blurredImage;
@@ -49,6 +50,17 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 @implementation MTDrawerTransitionAnimator
 
+
+#pragma mark - Properties
+
+- (void)setHomeController:(MTHomeController *)homeController
+{
+    _homeController = homeController;
+    
+    // get the bottom y coord of the navigation bar frame
+    CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
+    _navigationBarBottom = navigationBarFrame.origin.y + navigationBarFrame.size.height;
+}
 
 
 #pragma mark - UIViewControllerTransitioningDelegate Methods
@@ -95,7 +107,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)animationEnded: (BOOL) transitionCompleted;
 {
-    NSLog(@"ended, resetting");
     // reset
     self.transitionContext = nil;
     self.interactive = NO;
@@ -115,8 +126,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
-    NSLog(@"starting animation transtion");
-    
     // initialize the transitionContext
     [self MT_initializeTransition: transitionContext];
     
@@ -190,8 +199,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)startInteractiveTransition: (id<UIViewControllerContextTransitioning>)transitionContext
 {
-    NSLog(@"starting interactive transtion");
-    
     // initialize the transitionContext
     [self MT_initializeTransition: transitionContext];
     
@@ -229,15 +236,14 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         return NO;
     }
 
-    CGPoint point =  [recognizer locationInView: self.homeController.navigationController.view];
-    CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
-    
+    CGPoint point =  [recognizer locationInView: recognizer.view];
+
     UIViewController *visibleController =
         self.homeController.navigationController.visibleViewController;
             
     if (([visibleController isKindOfClass: [MTHomeController class]]
         || [visibleController isKindOfClass: [MTLocationController class]])
-            && point.y < navigationBarFrame.origin.y + navigationBarFrame.size.height)
+            && point.y < _navigationBarBottom)
     {
         return YES;
     }
@@ -255,24 +261,25 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)dynamicAnimatorDidPause: (UIDynamicAnimator *)animator
 {
-    NSLog(@"pause");
     CGPoint velocity = [self.bodyBehavior linearVelocityForItem: self.dynamicView];
     if(velocity.y < .5
         && [[animator behaviors] count] > 0)
     {
-        NSLog(@"complete %d", self.isCancelled == NO);
-        if(self.isCancelled)
-            [self.transitionContext cancelInteractiveTransition];
-        else
-            [self.transitionContext finishInteractiveTransition];
-        [self.transitionContext completeTransition: self.isCancelled == NO];
-    
         // remove dynamic behaviors
         [self.dynamicAnimator removeAllBehaviors];
         [self removeChildBehavior: self.attachBehavior];
         [self removeChildBehavior: self.collisionBehavior];
         [self removeChildBehavior: self.bodyBehavior];
         [self removeChildBehavior: self.gravityBehavior];
+    }
+    else if ([[animator behaviors] count] == 0)
+    {
+        // notify the transition context of cancel/finish + completion of transition
+        if(self.isCancelled)
+            [self.transitionContext cancelInteractiveTransition];
+        else
+            [self.transitionContext finishInteractiveTransition];
+        [self.transitionContext completeTransition: self.isCancelled == NO];
     }
 }
 
@@ -285,7 +292,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         self.homeController.navigationController.view];
 
     UIGestureRecognizerState state = recognizer.state;
-    NSLog(@"state %d", state);
     switch (state)
     {
         case UIGestureRecognizerStateBegan:
@@ -295,14 +301,14 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             
             // determine whether we are presenting or dismissing the drawer and start the transition
             CGPoint point =  [recognizer locationInView: self.homeController.navigationController.view];
-            CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
+
             UIViewController *visibleController =
                 self.homeController.navigationController.visibleViewController;
             if (([visibleController isKindOfClass: [MTHomeController class]]
                 || [visibleController isKindOfClass: [MTLocationController class]])
-                    && point.y < navigationBarFrame.origin.y + navigationBarFrame.size.height)
+                    && point.y < _navigationBarBottom)
             {
-                NSLog(@"presenting drawer");
+                // present the drawer
                 [self.homeController presentViewController: self.homeController.drawerController
                     animated: YES
                     completion: nil];
@@ -311,7 +317,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
                 && point.y > self.homeController.navigationController.view.frame.size.height
                     - LOWER_BOUNDS_FOR_DRAWER_BUTTON)
             {
-                NSLog(@"dismissing drawer");
+                // dismiss the drawer
                 [self.homeController dismissViewControllerAnimated: YES
                     completion: nil];
             }
@@ -332,15 +338,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             view.center = CGPointMake(
                 _startingCenterForDrawerView.x,
                 _startingCenterForDrawerView.y + translation.y);
-            
-            // move the blurred image
-            CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
-            CGRect bluredImgFrame = self.homeController.drawerController.bkgImage.frame;
-            bluredImgFrame.origin.y = self.isAppearing == YES
-                ? bluredImgFrame.size.height - translation.y
-                    - navigationBarFrame.origin.y - navigationBarFrame.size.height
-                : -translation.y;
-            self.homeController.drawerController.bkgImage.frame = bluredImgFrame;
         
             // update the percentage complete
             self.percentComplete = (translation.y / _toEndFrame.size.height);
@@ -423,13 +420,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
                 // call update on the transition context
                 [weakSelf.transitionContext updateInteractiveTransition:
                     [weakSelf percentComplete]];
-                
-                // move the blurred image
-                CGFloat diff = -height - dynamicView.frame.origin.y;
-                weakSelf.homeController.drawerController.bkgImage.center = CGPointMake(
-                    weakSelf.startingCenterForBlurredView.x,
-                    weakSelf.startingCenterForBlurredView.y + diff);
-                NSLog(@"new blur center %f diff %f", weakSelf.homeController.drawerController.bkgImage.center.y, diff);
             };
             
             // start the dynamics animation
@@ -466,29 +456,22 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)MT_applyBlur
 {
+    // take a snapshot of current screen
     CGSize size = self.homeController.view.frame.size;
     size.height += self.homeController.view.frame.origin.y;
     UIGraphicsBeginImageContextWithOptions(size, NO, 0.f);
-    
     [self.homeController.navigationController.view drawViewHierarchyInRect: CGRectMake(
         0.f,
         self.homeController.view.frame.origin.y,
         size.width,
         size.height)
         afterScreenUpdates: NO];
-    
     UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    // blur the UIImage
+    // set the blurred the UIImage
     _blurredImage = [viewImage applyLightEffect];
-    self.homeController.drawerController.bkgImage.image = _blurredImage;
-    
-    CGPoint center = self.homeController.drawerController.bkgImage.center;
-    center.y = size.height * 1.5f;
-    self.homeController.drawerController.bkgImage.center = center;
-    _startingCenterForBlurredView = self.homeController.drawerController.bkgImage.center;
-    NSLog(@"starting blur center %f", _startingCenterForBlurredView.y);
+    [self.homeController.drawerController useBlurredImage: _blurredImage];
 }
 
 - (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext
@@ -501,18 +484,11 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     UIView *containerView = [transitionContext containerView];
     CGSize containerViewSize = containerView.frame.size;
     
-//    CGRect toStart = [transitionContext initialFrameForViewController: toVC];
-//    CGRect toEnd = [transitionContext finalFrameForViewController: toVC];
-//    CGRect fromStart = [transitionContext initialFrameForViewController: fromVC];
-//    CGRect fromEnd = [transitionContext finalFrameForViewController: fromVC];
-    
     if (self.isAppearing)
     {
-        CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
-    
         _toBeginFrame = CGRectMake(
             0.f,
-            -containerViewSize.height + navigationBarFrame.origin.y + navigationBarFrame.size.height,
+            -containerViewSize.height + _navigationBarBottom,
             containerViewSize.width,
             containerViewSize.height);
         _toEndFrame = [transitionContext finalFrameForViewController: toVC];

@@ -10,4 +10,13 @@
 
 @interface MTKVO : NSObject
 
+- (void)startObserving: (NSObject *)observable
+    forKeyPath: (NSString *)keyPath
+    options: (NSKeyValueObservingOptions)options
+    target: (NSObject *)target
+    selector: (SEL)selector;
+
+- (void)stopObserving: (NSObject *)observable
+    forKeyPath: (NSString *)keyPath;
+
 @end

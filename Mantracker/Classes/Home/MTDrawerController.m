@@ -8,11 +8,20 @@
 
 #import "MTDrawerController.h"
 #import "MTDrawerTransitionAnimator.h"
+#import "MTKVO.h"
 
 
 @interface MTDrawerController ()
+{
+    @private __strong MTKVO *_kvo;
+    @private CGFloat _height;
+    @private CGFloat _centerXCoord;
+}
+
+@property (nonatomic, weak) IBOutlet UIImageView *bkgImage;
 
 - (IBAction)MT_hideDrawer;
+- (void)MT_onCenterChanged: (NSDictionary *)change;
 
 @end
 
@@ -27,21 +36,43 @@
     return self;
 }
 
+- (void)dealloc
+{
+    if (_kvo != nil)
+    {
+        [_kvo stopObserving: self.view
+            forKeyPath: @"center"];
+        _kvo = nil;
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
     
-    CGPoint center = self.bkgImage.center;
-    center.y += self.view.bounds.size.height;
-    self.bkgImage.center = center;
+    // get original height and center of screen
+    _height = self.view.bounds.size.height;
+    _centerXCoord = self.view.center.x;
+    
+    // bind kvo
+    _kvo = [[MTKVO alloc]
+        init];
+    [_kvo startObserving: self.view
+        forKeyPath: @"center"
+        options: NSKeyValueObservingOptionNew
+        target: self
+        selector: @selector(MT_onCenterChanged:)];
+    
 }
 
-- (void)didReceiveMemoryWarning
+
+#pragma mark - Public Methods
+
+- (void)useBlurredImage: (UIImage *)image
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    self.bkgImage.image = image;
 }
+
 
 #pragma mark - Private Methods
 
@@ -51,6 +82,14 @@
     {
         [((MTDrawerTransitionAnimator *)self.transitioningDelegate) hideDrawer];
     }
+}
+
+- (void)MT_onCenterChanged: (NSDictionary *)change
+{
+    CGPoint p = [[change objectForKey: NSKeyValueChangeNewKey]
+        CGPointValue];
+    CGFloat newCenterY = _height - p.y;
+    self.bkgImage.center = CGPointMake(_centerXCoord, newCenterY);
 }
 
 @end
