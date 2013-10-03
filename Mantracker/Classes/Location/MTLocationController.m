@@ -34,7 +34,6 @@
 - (void)beginFaceDynamicsWithVelocity: (CGPoint)velocity;
 - (void)cancelFaceDynamics;
 - (void)endFaceDynamics;
-- (void)animateFaceCollision;
 
 - (IBAction)onFacePan: (UIGestureRecognizer *)recognizer;
 
@@ -78,6 +77,7 @@
     // create animator
     _dynamicAnimator = [[UIDynamicAnimator alloc]
         initWithReferenceView: self.view];
+    _dynamicAnimator.delegate = self;
 		
 	[self addParallaxEffect];
 }
@@ -97,19 +97,23 @@
 {
     //Parallax effect on home background image
     CGFloat parallaxBoundaryOffset = 10.0f;
-    UIInterpolatingMotionEffect *xAxis = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.x" type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
-    xAxis.minimumRelativeValue = [NSNumber numberWithFloat:-parallaxBoundaryOffset];
-    xAxis.maximumRelativeValue = [NSNumber numberWithFloat:parallaxBoundaryOffset];
+    UIInterpolatingMotionEffect *xAxis = [[UIInterpolatingMotionEffect alloc]
+        initWithKeyPath: @"center.x"
+        type: UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+    xAxis.minimumRelativeValue = [NSNumber numberWithFloat: -parallaxBoundaryOffset];
+    xAxis.maximumRelativeValue = [NSNumber numberWithFloat: parallaxBoundaryOffset];
     
     
-    UIInterpolatingMotionEffect *yAxis = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.y" type:UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
-    yAxis.minimumRelativeValue = [NSNumber numberWithFloat:parallaxBoundaryOffset];
-    yAxis.maximumRelativeValue = [NSNumber numberWithFloat:-parallaxBoundaryOffset];
+    UIInterpolatingMotionEffect *yAxis = [[UIInterpolatingMotionEffect alloc]
+        initWithKeyPath: @"center.y"
+        type: UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
+    yAxis.minimumRelativeValue = [NSNumber numberWithFloat: parallaxBoundaryOffset];
+    yAxis.maximumRelativeValue = [NSNumber numberWithFloat: -parallaxBoundaryOffset];
     
     UIMotionEffectGroup *group = [[UIMotionEffectGroup alloc] init];
     group.motionEffects = @[yAxis,xAxis];
     
-    [self.houseImage addMotionEffect:group];
+    [self.houseImage addMotionEffect: group];
 	[self.skyImage addMotionEffect: group];
 	[self.cloud1Image addMotionEffect: group];
 	[self.cloud2Image addMotionEffect: group];
@@ -205,21 +209,6 @@
     [_dynamicAnimator addBehavior: snap];
 }
 
-- (void)animateFaceCollision
-{
-    NSLog(@"TODO: animate face collision");
-
-    // cancel any existing timer
-    [NSObject cancelPreviousPerformRequestsWithTarget: self
-        selector: @selector(endFaceDynamics)
-        object: nil];
-    
-    // restart timer
-    [self performSelector: @selector(endFaceDynamics)
-        withObject: nil
-        afterDelay: MTFacePlayTimeoutSeconds];
-}
-
 - (IBAction)onFacePan: (UIPanGestureRecognizer *)recognizer
 {
     // handle gesture
@@ -291,6 +280,32 @@
 }
 
 
+#pragma mark - UIDynamicAnimatorDelegate Methods
+
+- (void)dynamicAnimatorWillResume: (UIDynamicAnimator*)animator
+{
+}
+
+- (void)dynamicAnimatorDidPause: (UIDynamicAnimator*)animator
+{
+    // snap back if not at center
+    CGPoint facePosition = _faceImage.center;
+    if (facePosition.x != _faceStartLocation.x
+        || facePosition.y != _faceStartLocation.y)
+    {
+        // cancel any existing timer
+        [NSObject cancelPreviousPerformRequestsWithTarget: self
+            selector: @selector(endFaceDynamics)
+            object: nil];
+        
+        // restart timer
+        [self performSelector: @selector(endFaceDynamics)
+            withObject: nil
+            afterDelay: MTFacePlayTimeoutSeconds];
+    }
+}
+
+
 #pragma mark - UICollisionBehaviorDelegate Methods
 
 - (void)collisionBehavior: (UICollisionBehavior *)behavior
@@ -298,7 +313,7 @@
     withBoundaryIdentifier: (id <NSCopying>)identifier
     atPoint: (CGPoint)position
 {
-    [self animateFaceCollision];
+    // TODO: animate face collision
 }
 
 

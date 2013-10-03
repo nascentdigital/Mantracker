@@ -5,6 +5,7 @@
 
 @interface MTLocationController : UIViewController
     <UIGestureRecognizerDelegate,
+    UIDynamicAnimatorDelegate,
     UICollisionBehaviorDelegate>
 
 #pragma mark - Properties
