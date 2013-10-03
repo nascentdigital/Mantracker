@@ -101,11 +101,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="common-cloud1.png" translatesAutoresizingMaskIntoConstraints="NO" id="ujm-vx-jfX">
-                                <rect key="frame" x="314" y="194" width="258" height="106"/>
+                                <rect key="frame" x="365" y="172" width="258" height="106"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="common-cloud2.png" translatesAutoresizingMaskIntoConstraints="NO" id="AbS-mh-4rh">
-                                <rect key="frame" x="455" y="29" width="254" height="145"/>
+                                <rect key="frame" x="108" y="30" width="254" height="145"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="common-house-cut.png" translatesAutoresizingMaskIntoConstraints="NO" id="U5x-qh-9cJ">
@@ -211,6 +211,10 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="pull-down.png" translatesAutoresizingMaskIntoConstraints="NO" id="pE0-Ck-ho2">
+                                <rect key="frame" x="13" y="69" width="294" height="446"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -249,6 +253,7 @@
         <image name="location-tweet.png" width="302" height="58"/>
         <image name="main-myplace.png" width="304" height="94"/>
         <image name="man-icon-large.png" width="50" height="50"/>
+        <image name="pull-down.png" width="294" height="446"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

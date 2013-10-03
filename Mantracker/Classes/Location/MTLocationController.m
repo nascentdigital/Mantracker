@@ -3,6 +3,8 @@
 
 #pragma mark Constants
 
+#define MTFaceVelocityMax           2.f
+#define MTFaceVelocityMultiplier    0.005f
 #define MTFacePlayTimeoutSeconds    2.0
 
 
@@ -77,29 +79,74 @@
         initWithReferenceView: self.view];
 }
 
-- (void) viewWillAppear:(BOOL)animated
+- (void) animateCloud1
 {
-	// animate clouds
-	[UIView animateWithDuration: 1.f
-		delay: 2.f
-		options: 0//UIViewAnimationOptionRepeat
-		animations:
-		^{
-			self.cloud1Image.frame = CGRectMake(0.f, self.cloud1Image.frame.origin.y, self.cloud1Image.frame.size.width, self.cloud1Image.frame.size.height);
-			self.cloud2Image.frame = CGRectMake(0.f, self.cloud2Image.frame.origin.y, self.cloud2Image.frame.size.width, self.cloud2Image.frame.size.height);
-			self.noteImage.frame = CGRectMake(100, 100, 200, 200);
-		}
+	[UIView animateWithDuration: 0.1
+		delay: 0.f
+		options: 0
+		animations: nil
 		completion:
 		^(BOOL finished){
-			if (!finished)
-			{
-				NSLog(@"not finished");
-			}
-			else
-			{
-				NSLog(@"finished");
-			}
+			[UIView animateWithDuration: 45.f
+				delay: 0.f
+				options: UIViewAnimationOptionCurveLinear //UIViewAnimationOptionCurveEaseIn
+				animations:
+				^{
+					self.cloud1Image.frame = CGRectMake(
+						-40,
+						self.cloud1Image.frame.origin.y,
+						self.cloud1Image.frame.size.width,
+						self.cloud1Image.frame.size.height);
+				}
+				completion:
+				^(BOOL finished){
+					self.cloud1Image.frame = CGRectMake(
+						365,
+						self.cloud1Image.frame.origin.y,
+						self.cloud1Image.frame.size.width,
+						self.cloud1Image.frame.size.height);
+					[self animateCloud1];
+				}];
 		}];
+		
+	
+}
+
+- (void) animateCloud2
+{
+	[UIView animateWithDuration: 0.1
+		delay: 0.f
+		options: 0
+		animations: nil
+		completion:
+		^(BOOL finished){
+			[UIView animateWithDuration: 30.f
+				delay: 0.f
+				options: UIViewAnimationOptionCurveLinear//UIViewAnimationOptionCurveEaseIn
+				animations:
+				^{
+					self.cloud2Image.frame = CGRectMake(
+						-20,
+						self.cloud2Image.frame.origin.y,
+						self.cloud2Image.frame.size.width,
+						self.cloud2Image.frame.size.height);
+				}
+				completion:
+				^(BOOL finished){
+					self.cloud2Image.frame = CGRectMake(
+						320,
+						self.cloud2Image.frame.origin.y,
+						self.cloud2Image.frame.size.width,
+						self.cloud2Image.frame.size.height);
+					[self animateCloud2];
+				}];
+		}];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+	[self animateCloud1];
+	[self animateCloud2];
 }
 
 #pragma mark - Helper Methods
