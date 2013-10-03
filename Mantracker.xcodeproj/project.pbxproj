@@ -126,6 +126,7 @@
 		46C963AC17FA2C6500686A7F /* MTDrawerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTDrawerController.m; sourceTree = "<group>"; };
 		46C963AE17FA50B300686A7F /* MTDrawerTransitionAnimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTDrawerTransitionAnimator.h; sourceTree = "<group>"; };
 		46C963AF17FA50B400686A7F /* MTDrawerTransitionAnimator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTDrawerTransitionAnimator.m; sourceTree = "<group>"; };
+		FB18D1BA17FDE4F100D65E4A /* MTEasing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MTEasing.h; sourceTree = "<group>"; };
 		FBE0FEE417FB2B5100F42D40 /* arrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "arrow@2x.png"; sourceTree = "<group>"; };
 		FBE0FEE517FB2B5100F42D40 /* bar-pulldown@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bar-pulldown@2x.png"; sourceTree = "<group>"; };
 		FBE0FEE617FB2B5100F42D40 /* heart@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "heart@2x.png"; sourceTree = "<group>"; };
@@ -330,6 +331,7 @@
 				FBF26D3617F8EEF80023D29C /* MTNavigationDelegate.m */,
 				465C271217FCE03D009C11DC /* MTKVO.h */,
 				465C271317FCE03D009C11DC /* MTKVO.m */,
+				FB18D1BA17FDE4F100D65E4A /* MTEasing.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
