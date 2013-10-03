@@ -14,7 +14,7 @@
 
 
 #define BLUR_BACKGROUND
-#define USE_SIMPLE_ANIMATION 0
+#define USE_DEFAULT_TRANSITION
 
 #define UPPER_BOUNDS_FOR_DRAWER_BUTTON 0.f
 #define LOWER_BOUNDS_FOR_DRAWER_BUTTON 300.f
@@ -31,7 +31,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     @private CGRect _toBeginFrame;
     @private CGRect _toEndFrame;
     @private UIImage *_blurredImage;
-    @private BOOL _useSimpleAnimation;
 }
 
 @property (nonatomic, weak) UIView *dynamicView;
@@ -81,6 +80,9 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     presentingController: (UIViewController *)presenting
     sourceController:(UIViewController *)source
 {
+#ifdef USE_DEFAULT_TRANSITION
+    return nil;
+#endif
     self.appearing = YES;
     return self;
 }
@@ -89,6 +91,9 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 - (id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:
     (UIViewController *)dismissed
 {
+#ifdef USE_DEFAULT_TRANSITION
+    return nil;
+#endif
     self.appearing = NO;
     return self;
 }
@@ -130,9 +135,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 - (NSTimeInterval)transitionDuration:
     (id<UIViewControllerContextTransitioning>)transitionContext
 {
-    return _useSimpleAnimation == YES
-        ? 0.3f
-        : 1.f;
+    return 1.f;
 }
 
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
@@ -160,49 +163,29 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             belowSubview: fromVC.view];
     }
 
-    void (^animation)() =  ^
-    {
-        if (self.isAppearing)
+    [UIView animateWithDuration: [self transitionDuration: transitionContext]
+        delay: 0.f
+        usingSpringWithDamping: self.isAppearing == YES
+            ? 0.8f
+            : 0.3f
+        initialSpringVelocity: 1.f
+        options: UIViewAnimationOptionCurveLinear
+        animations: ^
         {
-            toVC.view.center = [MTDrawerTransitionAnimator centerPointForFrame:
-                [transitionContext finalFrameForViewController: toVC]];
+            if (self.isAppearing)
+            {
+                toVC.view.center = [MTDrawerTransitionAnimator centerPointForFrame:
+                    [transitionContext finalFrameForViewController: toVC]];
+            }
+            else
+            {
+                fromVC.view.center = [MTDrawerTransitionAnimator centerPointForFrame: _toBeginFrame];
+            }
         }
-        else
+        completion: ^(BOOL finished)
         {
-            fromVC.view.center = [MTDrawerTransitionAnimator centerPointForFrame: _toBeginFrame];
-        }
-    };
-    
-    if (_useSimpleAnimation == YES)
-    {
-        [UIView animateWithDuration: [self transitionDuration: transitionContext]
-            animations: ^
-            {
-                animation();
-            }
-            completion: ^(BOOL finished)
-            {
-                [transitionContext completeTransition: YES];
-            }];
-    }
-    else
-    {
-        [UIView animateWithDuration: [self transitionDuration: transitionContext]
-            delay: 0.f
-            usingSpringWithDamping: self.isAppearing == YES
-                ? 0.8f
-                : 0.3f
-            initialSpringVelocity: 1.f
-            options: UIViewAnimationOptionCurveLinear
-            animations: ^
-            {
-                animation();
-            }
-            completion: ^(BOOL finished)
-            {
-                [transitionContext completeTransition: YES];
-            }];
-    }
+            [transitionContext completeTransition: YES];
+        }];
 }
 
 
@@ -539,8 +522,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext
 {
-    _useSimpleAnimation = USE_SIMPLE_ANIMATION == 1;
-
     self.transitionContext = transitionContext;
     UIViewController *toVC = [transitionContext viewControllerForKey:
         UITransitionContextToViewControllerKey];

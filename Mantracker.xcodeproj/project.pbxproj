@@ -197,6 +197,15 @@
 			path = Categories;
 			sourceTree = "<group>";
 		};
+		465C271517FE01AA009C11DC /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				465C271217FCE03D009C11DC /* MTKVO.h */,
+				465C271317FCE03D009C11DC /* MTKVO.m */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
 		FBE0FEE217FB2B5100F42D40 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -323,14 +332,13 @@
 			isa = PBXGroup;
 			children = (
 				4658CEC217FB3A32008A7D1A /* Categories */,
+				465C271517FE01AA009C11DC /* Helpers */,
 				FBF26D2017F8BA280023D29C /* Home */,
 				FBF26D2317F8BA280023D29C /* Location */,
 				FBF26D2417F8BA280023D29C /* MTAppDelegate.h */,
 				FBF26D2517F8BA280023D29C /* MTAppDelegate.m */,
 				FBF26D3517F8EEF80023D29C /* MTNavigationDelegate.h */,
 				FBF26D3617F8EEF80023D29C /* MTNavigationDelegate.m */,
-				465C271217FCE03D009C11DC /* MTKVO.h */,
-				465C271317FCE03D009C11DC /* MTKVO.m */,
 				FB18D1BA17FDE4F100D65E4A /* MTEasing.h */,
 			);
 			path = Classes;
