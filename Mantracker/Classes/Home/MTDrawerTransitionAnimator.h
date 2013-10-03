@@ -8,6 +8,7 @@
 
 @class MTHomeController;
 
+// DEMO: 4a Interactive Transitions
 @interface MTDrawerTransitionAnimator : UIDynamicBehavior <
     UIViewControllerTransitioningDelegate,
     UIViewControllerAnimatedTransitioning,

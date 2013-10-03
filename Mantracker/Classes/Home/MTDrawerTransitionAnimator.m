@@ -138,6 +138,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     return 1.f;
 }
 
+// DEMO: 2a Blurring
 - (void)animateTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
     // initialize the transitionContext
@@ -191,6 +192,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 #pragma mark - UIViewControllerInteractiveTransitioning Methods
 
+// DEMO: 2b Blurring
 - (void)startInteractiveTransition: (id<UIViewControllerContextTransitioning>)transitionContext
 {
     if (self.cancelled == YES)
@@ -460,7 +462,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             [self addChildBehavior: self.gravityBehavior];
             [self addChildBehavior: self.collisionBehavior];
             
-            MTDrawerTransitionAnimator *weakSelf = self;
+            __weak MTDrawerTransitionAnimator *weakSelf = self;
             self.action = ^
             {
                 // call update on the transition context
@@ -502,6 +504,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)MT_applyBlur
 {
+    // DEMO: 2c Blurring
     // take a snapshot of current screen
     CGSize size = self.homeController.view.frame.size;
     size.height += self.homeController.view.frame.origin.y;

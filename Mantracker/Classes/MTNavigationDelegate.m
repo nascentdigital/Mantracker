@@ -31,6 +31,7 @@
         return nil;
     }
 
+    // DEMO: 3b Custom Transitions
     // push operations
     if (operation == UINavigationControllerOperationPush)
     {

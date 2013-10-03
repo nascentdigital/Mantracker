@@ -37,6 +37,7 @@
     return MTAnimatorDuration;
 }
 
+// DEMO: 3c Custom Transitions
 - (void)animateTransition: (id<UIViewControllerContextTransitioning>)context
 {
 	MTHomeController *homeController;
@@ -60,7 +61,7 @@
 			viewControllerForKey: UITransitionContextToViewControllerKey];
 		transitionIsForward = NO;
 	}
-	
+    
 	// get views
 	UIView *locationView = locationController.view;
 	UIView *homeView = homeController.view;
@@ -139,6 +140,8 @@
 			^(BOOL finished){
 				[_topSnapView removeFromSuperview];
 				[_botSnapView removeFromSuperview];
+
+                // DEMO: 3d Custom Transitions
 				[context completeTransition: finished];
 			}];
 	}
@@ -187,6 +190,7 @@
 				[_botSnapView removeFromSuperview];
 				homeView.alpha = 1.f;
 				[context completeTransition: finished];
+                
 			}];
 	}
 	

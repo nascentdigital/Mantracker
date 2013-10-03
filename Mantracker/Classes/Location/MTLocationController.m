@@ -84,19 +84,37 @@
 	[self addParallaxEffectTo: self.cloud1Image withXOffset: 10.f yOffset: 20.f];
 	[self addParallaxEffectTo: self.cloud2Image withXOffset: 10.f yOffset: 20.f];
 	[self addParallaxEffectTo:self.faceImage withXOffset: 5.f yOffset: 10.f];
+
+    [self performSelector: @selector(animateClouds)
+        withObject: nil
+        afterDelay: 1.2];
 }
 
-- (void) viewDidAppear:(BOOL)animated
+- (void)animateClouds
 {
-    [[NSOperationQueue mainQueue] addOperationWithBlock:  ^
-    {
-        [self animateCloud: self.cloud1Image
-            withDuration: 4.f toX: -90 resetX: 365];
-        [self animateCloud: self.cloud2Image
-            withDuration: 3.f toX: -85 resetX: 320];
-    }];
-}
+    // HACK: the transitions prevent this animation from start right away, so we delay it
+    // TODO: setup a 1st pass where sky is empty
 
+//    [UIView animateWithDuration: duration
+//        delay: 0.f
+//        options: UIViewAnimationOptionCurveLinear
+//        animations:
+//        ^{
+//            cloud.frame = CGRectMake(
+//                toX,
+//                cloud.frame.origin.y,
+//                cloud.frame.size.width,
+//                cloud.frame.size.height);
+//        }
+//        completion:
+//        ^(BOOL finished)
+//        {
+            [self animateCloud: self.cloud1Image
+                withDuration: 45.f toX: -90 resetX: 365];
+            [self animateCloud: self.cloud2Image
+                withDuration: 35.f toX: -85 resetX: 320];
+//        }];
+}
 
 #pragma mark - Helper Methods
 
@@ -110,7 +128,7 @@
     xAxis.minimumRelativeValue = @(-xOffset);
     xAxis.maximumRelativeValue = @(xOffset);
     
-    
+    // DEMO: 1 Motion Effects (Parallax)
     UIInterpolatingMotionEffect *yAxis = [[UIInterpolatingMotionEffect alloc]
 		initWithKeyPath: @"center.y"
 		type: UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
@@ -129,36 +147,32 @@
 {
 
     __weak MTLocationController *weakSelf = self;
-//	[UIView animateWithDuration: 0.1
-//		delay: 0.f
-//		options: 0
-//		animations: nil
-//		completion:
-//		^(BOOL finished){
-
-			[UIView animateWithDuration: duration
-				delay: 0.f
-				options: UIViewAnimationOptionCurveLinear
-				animations:
-				^{
-					cloud.frame = CGRectMake(
-						toX,
-						cloud.frame.origin.y,
-						cloud.frame.size.width,
-						cloud.frame.size.height);
-				}
-				completion:
-				^(BOOL finished){
-					cloud.frame = CGRectMake(
-						resetX,
-						cloud.frame.origin.y,
-						cloud.frame.size.width,
-						cloud.frame.size.height);
-						
-					[weakSelf animateCloud: cloud
-						withDuration: duration toX: toX resetX: resetX];
-				}];
-//		}];
+    [UIView animateWithDuration: duration
+        delay: 0.f
+        options: UIViewAnimationOptionCurveLinear
+        animations:
+        ^{
+            cloud.frame = CGRectMake(
+                toX,
+                cloud.frame.origin.y,
+                cloud.frame.size.width,
+                cloud.frame.size.height);
+        }
+        completion:
+        ^(BOOL finished)
+        {
+            cloud.frame = CGRectMake(
+                resetX,
+                cloud.frame.origin.y,
+                cloud.frame.size.width,
+                cloud.frame.size.height);
+            
+            if (finished)
+            {
+                [weakSelf animateCloud: cloud
+                    withDuration: duration toX: toX resetX: resetX];
+            }
+        }];
 }
 
 - (void)beginFaceDynamicsWithVelocity: (CGPoint)velocity
