@@ -78,8 +78,12 @@
     _dynamicAnimator = [[UIDynamicAnimator alloc]
         initWithReferenceView: self.view];
     _dynamicAnimator.delegate = self;
-		
-	[self addParallaxEffect];
+	
+	[self addParallaxEffectTo: self.houseImage withXOffset: 10.f yOffset: 20.f];
+	[self addParallaxEffectTo: self.skyImage withXOffset: 10.f yOffset: 20.f];
+	[self addParallaxEffectTo: self.cloud1Image withXOffset: 10.f yOffset: 20.f];
+	[self addParallaxEffectTo: self.cloud2Image withXOffset: 10.f yOffset: 20.f];
+	[self addParallaxEffectTo:self.faceImage withXOffset: 5.f yOffset: 10.f];
 }
 
 - (void) viewDidAppear:(BOOL)animated
@@ -93,30 +97,27 @@
 
 #pragma mark - Helper Methods
 
--(void) addParallaxEffect
+-(void) addParallaxEffectTo: (UIView *) view
+	withXOffset: (CGFloat) xOffset
+	yOffset: (CGFloat) yOffset
 {
-    //Parallax effect on home background image
-    CGFloat parallaxBoundaryOffset = 10.0f;
     UIInterpolatingMotionEffect *xAxis = [[UIInterpolatingMotionEffect alloc]
-        initWithKeyPath: @"center.x"
-        type: UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
-    xAxis.minimumRelativeValue = [NSNumber numberWithFloat: -parallaxBoundaryOffset];
-    xAxis.maximumRelativeValue = [NSNumber numberWithFloat: parallaxBoundaryOffset];
+		initWithKeyPath: @"center.x"
+		type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+    xAxis.minimumRelativeValue = [NSNumber numberWithFloat: -xOffset];
+    xAxis.maximumRelativeValue = [NSNumber numberWithFloat: xOffset];
     
     
     UIInterpolatingMotionEffect *yAxis = [[UIInterpolatingMotionEffect alloc]
-        initWithKeyPath: @"center.y"
-        type: UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
-    yAxis.minimumRelativeValue = [NSNumber numberWithFloat: parallaxBoundaryOffset];
-    yAxis.maximumRelativeValue = [NSNumber numberWithFloat: -parallaxBoundaryOffset];
+		initWithKeyPath: @"center.y"
+		type: UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
+    yAxis.minimumRelativeValue = [NSNumber numberWithFloat: -yOffset];
+    yAxis.maximumRelativeValue = [NSNumber numberWithFloat: yOffset];
     
     UIMotionEffectGroup *group = [[UIMotionEffectGroup alloc] init];
-    group.motionEffects = @[yAxis,xAxis];
-    
-    [self.houseImage addMotionEffect: group];
-	[self.skyImage addMotionEffect: group];
-	[self.cloud1Image addMotionEffect: group];
-	[self.cloud2Image addMotionEffect: group];
+    group.motionEffects = @[yAxis, xAxis];
+	
+	[view addMotionEffect: group];
 }
 
 - (void) animateCloud: (UIImageView *) cloud

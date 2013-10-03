@@ -13,7 +13,7 @@
 #import "MTLocationController.h"
 
 #define USE_SIMPLE_ANIMATION 0
-#define UPPER_BOUNDS_FOR_DRAWER_BUTTON 50.f
+#define UPPER_BOUNDS_FOR_DRAWER_BUTTON 0.f
 #define LOWER_BOUNDS_FOR_DRAWER_BUTTON 300.f
 #define BLUR_BACKGROUND
 
@@ -41,15 +41,15 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 @property (nonatomic, strong) UIDynamicAnimator *animator;
 @property (nonatomic, strong) UIDynamicItemBehavior *bodyBehavior;
 @property (nonatomic, strong) UICollisionBehavior *collisionBehavior;
-@property (nonatomic, strong) UIAttachmentBehavior *attachBehavior;
 @property (nonatomic, strong) UIGravityBehavior *gravityBehavior;
 
 - (void)MT_applyBlur;
 - (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext;
-- (BOOL)panGestureToPullDownDrawer: (UIViewController *)visibleController
+- (BOOL)MT_panGestureToPullDownDrawer: (UIViewController *)visibleController
     touchPoint: (CGPoint)point;
-- (BOOL)panGestureToPullUpDrawer: (UIViewController *)visibleController
+- (BOOL)MT_panGestureToPullUpDrawer: (UIViewController *)visibleController
     touchPoint: (CGPoint)point;
++ (CGPoint)centerPointForFrame: (CGRect)frame;
 
 @end
 
@@ -158,11 +158,12 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     {
         if (self.isAppearing)
         {
-            toVC.view.frame = [transitionContext finalFrameForViewController: toVC];
+            toVC.view.center = [MTDrawerTransitionAnimator centerPointForFrame:
+                [transitionContext finalFrameForViewController: toVC]];
         }
         else
         {
-            fromVC.view.frame = _toBeginFrame;
+            fromVC.view.center = [MTDrawerTransitionAnimator centerPointForFrame: _toBeginFrame];
         }
     };
     
@@ -183,10 +184,10 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         [UIView animateWithDuration: [self transitionDuration: transitionContext]
             delay: 0.f
             usingSpringWithDamping: self.isAppearing == YES
-                ? 0.65f
+                ? 0.8f
                 : 0.3f
             initialSpringVelocity: 1.f
-            options: UIViewAnimationOptionCurveEaseInOut
+            options: UIViewAnimationOptionCurveLinear
             animations: ^
             {
                 animation();
@@ -252,12 +253,12 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     UIViewController *visibleController =
         self.homeController.navigationController.visibleViewController;
             
-    if ([self panGestureToPullDownDrawer: visibleController
+    if ([self MT_panGestureToPullDownDrawer: visibleController
         touchPoint: point] == YES)
     {
         return YES;
     }
-    else if ([self panGestureToPullUpDrawer: visibleController
+    else if ([self MT_panGestureToPullUpDrawer: visibleController
         touchPoint: point] == YES)
     {
         return YES;
@@ -276,10 +277,9 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     {
         // remove dynamic behaviors
         [self.dynamicAnimator removeAllBehaviors];
-        [self removeChildBehavior: self.attachBehavior];
+        [self removeChildBehavior: self.gravityBehavior];
         [self removeChildBehavior: self.collisionBehavior];
         [self removeChildBehavior: self.bodyBehavior];
-        [self removeChildBehavior: self.gravityBehavior];
     }
     else if ([[animator behaviors] count] == 0)
     {
@@ -313,7 +313,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
             UIViewController *visibleController =
                 self.homeController.navigationController.visibleViewController;
-            if ([self panGestureToPullDownDrawer: visibleController
+            if ([self MT_panGestureToPullDownDrawer: visibleController
                 touchPoint: point] == YES)
             {
                 // present the drawer
@@ -321,7 +321,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
                     animated: YES
                     completion: nil];
             }
-            else if ([self panGestureToPullUpDrawer: visibleController
+            else if ([self MT_panGestureToPullUpDrawer: visibleController
                 touchPoint: point] == YES)
             {
                 // dismiss the drawer
@@ -377,10 +377,19 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             CGRect frame = dynamicView.frame;
             float height = frame.size.height;
             
+            CGPoint velocity = [recognizer velocityInView:
+                self.homeController.navigationController.view];
+            CGFloat velocityThreshold = 600.f;
+            
             // determine whether the transition should be cancelled
             self.cancelled = state == UIGestureRecognizerStateCancelled
                 || state == UIGestureRecognizerStateFailed
-                || ABS(translation.y) < height * 0.5f;
+                || (self.isAppearing && velocity.y < velocityThreshold)
+                || (self.isAppearing == NO && velocity.y > -velocityThreshold)
+                || (velocity.y < ABS(velocityThreshold) && ABS(translation.y) < height * 0.33f);
+            
+            BOOL pullUpDrawer = ((self.isAppearing && self.cancelled)
+                || (self.isAppearing == NO && self.cancelled == NO));
             
             // create the animator
             self.animator = [[UIDynamicAnimator alloc]
@@ -393,39 +402,30 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             self.bodyBehavior.elasticity = .3f;
             [self.bodyBehavior addItem: dynamicView];
             
+            // set gravity behavior
+            self.gravityBehavior = [[UIGravityBehavior alloc]
+                initWithItems: @[dynamicView]];
+            [self.gravityBehavior setGravityDirection: CGVectorMake(
+                0.f,
+                pullUpDrawer == YES
+                    ? -1.f
+                    : 1.f)];
+            
             // set the collision behavior
             self.collisionBehavior = [[UICollisionBehavior alloc]
                 initWithItems: @[dynamicView]];
             [self.collisionBehavior setTranslatesReferenceBoundsIntoBoundaryWithInsets:
                 UIEdgeInsetsMake(
-                    -height,
+                    -height - 40.f,
                     0.f,
                     0.f,
                     0.f)];
             [self.collisionBehavior addItem: dynamicView];
             
-            // set the attachment behavior
-            CGPoint anchor = ((self.isAppearing && self.cancelled)
-                || (self.isAppearing == NO && self.cancelled == NO))
-                    ? CGPointMake(dynamicView.center.x, -1 * height - 40.f)
-                    : CGPointMake(dynamicView.center.x, 0.f);
-            self.attachBehavior = [[UIAttachmentBehavior alloc]
-                initWithItem: dynamicView
-                attachedToAnchor: anchor];
-            self.attachBehavior.damping = .1;
-            self.attachBehavior.frequency = 3.0;
-            self.attachBehavior.length = .5 * frame.size.height + 20.f;
-            
-            // set the gravity behavior
-            self.gravityBehavior = [[UIGravityBehavior alloc]
-                initWithItems: @[dynamicView]];
-            [self.gravityBehavior setMagnitude: 3.f];
-            
             // add all child dynamic behaviors
-            [self addChildBehavior: self.attachBehavior];
-            [self addChildBehavior: self.collisionBehavior];
             [self addChildBehavior: self.bodyBehavior];
             [self addChildBehavior: self.gravityBehavior];
+            [self addChildBehavior: self.collisionBehavior];
             
             MTDrawerTransitionAnimator *weakSelf = self;
             self.action = ^
@@ -436,7 +436,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             };
             
             // start the dynamics animation
-            [self.animator addBehavior:self];
+            [self.animator addBehavior: self];
         }
         break;
 
@@ -502,7 +502,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     {
         _toBeginFrame = CGRectMake(
             0.f,
-            -containerViewSize.height + _navigationBarBottom,
+            -containerViewSize.height,
             containerViewSize.width,
             containerViewSize.height);
         _toEndFrame = [transitionContext finalFrameForViewController: toVC];
@@ -514,7 +514,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     }
 }
 
-- (BOOL)panGestureToPullDownDrawer: (UIViewController *)visibleController
+- (BOOL)MT_panGestureToPullDownDrawer: (UIViewController *)visibleController
     touchPoint: (CGPoint)point
 {
     return (([visibleController isKindOfClass: [MTHomeController class]]
@@ -522,12 +522,18 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             && point.y < _navigationBarBottom + UPPER_BOUNDS_FOR_DRAWER_BUTTON);
 }
 
-- (BOOL)panGestureToPullUpDrawer: (UIViewController *)visibleController
+- (BOOL)MT_panGestureToPullUpDrawer: (UIViewController *)visibleController
     touchPoint: (CGPoint)point
 {
     return ([visibleController isKindOfClass: [MTDrawerController class]]
         && point.y > self.homeController.navigationController.view.frame.size.height
             - LOWER_BOUNDS_FOR_DRAWER_BUTTON);
+}
+
++ (CGPoint)centerPointForFrame: (CGRect)frame
+{
+    return CGPointMake(frame.origin.x + frame.size.width * 0.5f,
+        frame.origin.y + frame.size.height * 0.5f);
 }
 
 @end

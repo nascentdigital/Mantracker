@@ -147,7 +147,7 @@
 				(id)[[UIColor clearColor] CGColor]];
 			topGradientLayer.startPoint = CGPointMake(0.5f, 0.9f);
 			topGradientLayer.endPoint = CGPointMake(0.5f, 1.f);
-			_topSnapView.layer.mask = topGradientLayer;
+//			_topSnapView.layer.mask = topGradientLayer;
 			
 			// add gradient mask to bot snapshot
 			CAGradientLayer *botGradientLayer = [[CAGradientLayer alloc] init];
@@ -157,10 +157,10 @@
 				(id)[[UIColor blackColor] CGColor]];
 			botGradientLayer.startPoint = CGPointMake(0.5f, 0.f);
 			botGradientLayer.endPoint = CGPointMake(0.5f, 0.1f);
-			_botSnapView.layer.mask = botGradientLayer;
+//			_botSnapView.layer.mask = botGradientLayer;
 			
-			_topSnapView.alpha = 0.7f;
-			_botSnapView.alpha = 0.7f;
+//			_topSnapView.alpha = 0.7f;
+//			_botSnapView.alpha = 0.7f;
 			[locationView addSubview: _topSnapView];
 			[locationView addSubview: _botSnapView];
 			locationView.alpha = 1.f;
@@ -172,7 +172,7 @@
 				animations:
 				^{
 					[UIView addKeyframeWithRelativeStartTime: 0.f relativeDuration: 0.2 animations:^{
-						_topSnapView.alpha = 1.f;
+//						_topSnapView.alpha = 1.f;
 						[UIView setAnimationCurve: UIViewAnimationCurveEaseIn];
 						_topSnapEndFrame = CGRectMake(
 							0,
@@ -182,7 +182,7 @@
 							_topSnapView.frame.size.width, _topSnapView.frame.size.height);
 						_topSnapView.frame = _topSnapEndFrame;
 							
-						_botSnapView.alpha = 1.f;
+//						_botSnapView.alpha = 1.f;
 						_botSnapEndFrame = CGRectMake(0, homeView.frame.size.height,
 							_botSnapView.frame.size.width, _botSnapView.frame.size.height);
 						_botSnapView.frame = _botSnapEndFrame;
@@ -209,8 +209,8 @@
 			// set up snapshots
 			_topSnapView.frame = _topSnapEndFrame;
 			_botSnapView.frame = _botSnapEndFrame;
-			_topSnapView.alpha = 0.f;
-			_botSnapView.alpha = 0.7f;
+//			_topSnapView.alpha = 0.f;
+//			_botSnapView.alpha = 0.7f;
 			[context.containerView addSubview: _topSnapView];
 			[context.containerView addSubview: _botSnapView];
 			homeView.alpha = 0;
@@ -223,7 +223,7 @@
 				animations:
 				^{
 					[UIView addKeyframeWithRelativeStartTime: 0.f relativeDuration: 0.5f animations:^{
-						_topSnapView.alpha = 0.7f;
+						_topSnapView.alpha = 1.f;
 					}];
 					
 					[UIView addKeyframeWithRelativeStartTime: 0.7f relativeDuration: 0.2f animations:^{
@@ -231,10 +231,10 @@
 						_botSnapView.frame = _botSnapStartFrame;
 					}];
 					
-					[UIView addKeyframeWithRelativeStartTime: 0.9f relativeDuration: 0.1f animations:^{
-						_topSnapView.alpha = 1.f;
-						_botSnapView.alpha = 1.f;
-					}];
+//					[UIView addKeyframeWithRelativeStartTime: 0.9f relativeDuration: 0.1f animations:^{
+//						_topSnapView.alpha = 1.f;
+//						_botSnapView.alpha = 1.f;
+//					}];
 				}
 				completion:
 				^(BOOL finished){
