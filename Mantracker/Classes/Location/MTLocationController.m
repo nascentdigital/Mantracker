@@ -3,8 +3,7 @@
 
 #pragma mark Constants
 
-#define MTFaceVelocityMax           2.f
-#define MTFaceVelocityMultiplier    0.005f
+#define MTFacePlayTimeoutSeconds    1.0
 
 
 #pragma mark - Internal Interface
@@ -73,6 +72,10 @@
     
     // initialize label with location
     _titleLabel.text = _location.name;
+    
+    // create animator
+    _dynamicAnimator = [[UIDynamicAnimator alloc]
+        initWithReferenceView: self.view];
 }
 
 - (void) viewWillAppear:(BOOL)animated
@@ -116,7 +119,7 @@
         // restart timer
         [self performSelector: @selector(endFaceDynamics)
             withObject: nil
-            afterDelay: 1.0];
+            afterDelay: MTFacePlayTimeoutSeconds];
     }
 }
 
@@ -126,10 +129,6 @@
 {
     // stop previous dynamics (if any)
     [self cancelFaceDynamics];
-
-    // create animator
-    _dynamicAnimator = [[UIDynamicAnimator alloc]
-        initWithReferenceView: self.view];
 
     // TODO: make gravity responsive to accelerometer or motion effects
     // add gravity
@@ -145,18 +144,12 @@
     collision.translatesReferenceBoundsIntoBoundary = YES;
     [_dynamicAnimator addBehavior: collision];
 
-    // normalize and clamp velocity
-    velocity.x = MAX(-MTFaceVelocityMax, MIN(MTFaceVelocityMax,
-        velocity.x * MTFaceVelocityMultiplier));
-    velocity.y = MAX(-MTFaceVelocityMax, MIN(MTFaceVelocityMax,
-        velocity.y * MTFaceVelocityMultiplier));
-
-    // add push
-    UIPushBehavior *push = [[UIPushBehavior alloc]
-        initWithItems: @[_faceImage]
-        mode: UIPushBehaviorModeInstantaneous];
-    push.pushDirection = CGVectorMake(velocity.x, velocity.y);
-    [_dynamicAnimator addBehavior: push];
+    // add dynamics behavior for initial velocity
+    UIDynamicItemBehavior *properties = [[UIDynamicItemBehavior alloc]
+        initWithItems: @[_faceImage]];
+    [properties addLinearVelocity: velocity
+        forItem: _faceImage];
+    [_dynamicAnimator addBehavior: properties];
     
     // start observing animations
     [_faceImage addObserver: self
@@ -168,25 +161,21 @@
 
 - (void)cancelFaceDynamics
 {
-    if (_dynamicAnimator != nil)
-    {
-        // cancel any existing timer
-        [NSObject cancelPreviousPerformRequestsWithTarget: self
-            selector: @selector(endFaceDynamics)
-            object: nil];
+    // cancel any existing timer
+    [NSObject cancelPreviousPerformRequestsWithTarget: self
+        selector: @selector(endFaceDynamics)
+        object: nil];
 
-        // stop observing
-        if (_facePositionTracking)
-        {
-            _facePositionTracking = NO;
-            [_faceImage removeObserver: self
-                forKeyPath: @"center"];
-        }
-    
-        // tear down animator
-        [_dynamicAnimator removeAllBehaviors];
-        _dynamicAnimator = nil;
+    // stop observing
+    if (_facePositionTracking)
+    {
+        _facePositionTracking = NO;
+        [_faceImage removeObserver: self
+            forKeyPath: @"center"];
     }
+
+    // tear down animator
+    [_dynamicAnimator removeAllBehaviors];
 }
 
 - (void)endFaceDynamics
@@ -194,10 +183,6 @@
     // cancel any previous dynamics
     [self cancelFaceDynamics];
     
-    // create animator
-    _dynamicAnimator = [[UIDynamicAnimator alloc]
-        initWithReferenceView: self.view];
-
     // add snap
     UISnapBehavior *snap = [[UISnapBehavior alloc]
         initWithItem: _faceImage
