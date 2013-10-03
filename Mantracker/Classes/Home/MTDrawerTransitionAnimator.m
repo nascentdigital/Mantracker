@@ -13,7 +13,8 @@
 #import "MTLocationController.h"
 
 #define USE_SIMPLE_ANIMATION 0
-#define LOWER_BOUNDS_FOR_DRAWER_BUTTON 50.f
+#define UPPER_BOUNDS_FOR_DRAWER_BUTTON 50.f
+#define LOWER_BOUNDS_FOR_DRAWER_BUTTON 300.f
 #define BLUR_BACKGROUND
 
 static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
@@ -45,6 +46,10 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)MT_applyBlur;
 - (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext;
+- (BOOL)panGestureToPullDownDrawer: (UIViewController *)visibleController
+    touchPoint: (CGPoint)point;
+- (BOOL)panGestureToPullUpDrawer: (UIViewController *)visibleController
+    touchPoint: (CGPoint)point;
 
 @end
 
@@ -159,7 +164,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         {
             fromVC.view.frame = _toBeginFrame;
         }
-
     };
     
     if (_useSimpleAnimation == YES)
@@ -199,6 +203,13 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)startInteractiveTransition: (id<UIViewControllerContextTransitioning>)transitionContext
 {
+    if (self.cancelled == YES)
+    {
+        [transitionContext cancelInteractiveTransition];
+        [transitionContext completeTransition: NO];
+        return;
+    }
+
     // initialize the transitionContext
     [self MT_initializeTransition: transitionContext];
     
@@ -241,15 +252,13 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     UIViewController *visibleController =
         self.homeController.navigationController.visibleViewController;
             
-    if (([visibleController isKindOfClass: [MTHomeController class]]
-        || [visibleController isKindOfClass: [MTLocationController class]])
-            && point.y < _navigationBarBottom)
+    if ([self panGestureToPullDownDrawer: visibleController
+        touchPoint: point] == YES)
     {
         return YES;
     }
-    else if ([visibleController isKindOfClass: [MTDrawerController class]]
-        && point.y > self.homeController.navigationController.view.frame.size.height
-            - LOWER_BOUNDS_FOR_DRAWER_BUTTON)
+    else if ([self panGestureToPullUpDrawer: visibleController
+        touchPoint: point] == YES)
     {
         return YES;
     }
@@ -304,18 +313,16 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
             UIViewController *visibleController =
                 self.homeController.navigationController.visibleViewController;
-            if (([visibleController isKindOfClass: [MTHomeController class]]
-                || [visibleController isKindOfClass: [MTLocationController class]])
-                    && point.y < _navigationBarBottom)
+            if ([self panGestureToPullDownDrawer: visibleController
+                touchPoint: point] == YES)
             {
                 // present the drawer
                 [self.homeController presentViewController: self.homeController.drawerController
                     animated: YES
                     completion: nil];
             }
-            else if ([visibleController isKindOfClass: [MTDrawerController class]]
-                && point.y > self.homeController.navigationController.view.frame.size.height
-                    - LOWER_BOUNDS_FOR_DRAWER_BUTTON)
+            else if ([self panGestureToPullUpDrawer: visibleController
+                touchPoint: point] == YES)
             {
                 // dismiss the drawer
                 [self.homeController dismissViewControllerAnimated: YES
@@ -351,6 +358,12 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         case UIGestureRecognizerStateEnded:
         case UIGestureRecognizerStateCancelled:
         {
+            if (_transitionContext == nil)
+            {
+                self.cancelled = YES;
+                return;
+            }
+        
             UIView *containerView = [_transitionContext containerView];
             if (self.dynamicView == nil)
             {
@@ -476,6 +489,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext
 {
+    NSLog(@"initialize transition");
     _useSimpleAnimation = USE_SIMPLE_ANIMATION == 1;
 
     self.transitionContext = transitionContext;
@@ -498,6 +512,22 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         [self MT_applyBlur];
 #endif
     }
+}
+
+- (BOOL)panGestureToPullDownDrawer: (UIViewController *)visibleController
+    touchPoint: (CGPoint)point
+{
+    return (([visibleController isKindOfClass: [MTHomeController class]]
+        || [visibleController isKindOfClass: [MTLocationController class]])
+            && point.y < _navigationBarBottom + UPPER_BOUNDS_FOR_DRAWER_BUTTON);
+}
+
+- (BOOL)panGestureToPullUpDrawer: (UIViewController *)visibleController
+    touchPoint: (CGPoint)point
+{
+    return ([visibleController isKindOfClass: [MTDrawerController class]]
+        && point.y > self.homeController.navigationController.view.frame.size.height
+            - LOWER_BOUNDS_FOR_DRAWER_BUTTON);
 }
 
 @end
