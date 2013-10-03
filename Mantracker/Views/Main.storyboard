@@ -156,7 +156,9 @@
                         <outlet property="cloud1Image" destination="ujm-vx-jfX" id="aYM-8T-ywr"/>
                         <outlet property="cloud2Image" destination="AbS-mh-4rh" id="Rls-BH-SYB"/>
                         <outlet property="faceImage" destination="z5V-Dg-bsi" id="ID5-qp-myb"/>
+                        <outlet property="houseImage" destination="U5x-qh-9cJ" id="pFu-wb-8GO"/>
                         <outlet property="noteImage" destination="KIF-js-Wn8" id="E2J-CU-MiU"/>
+                        <outlet property="skyImage" destination="uOV-oQ-OeO" id="yV9-3F-1mP"/>
                         <outlet property="titleLabel" destination="QZX-8C-JU5" id="zEP-41-bge"/>
                     </connections>
                 </viewController>

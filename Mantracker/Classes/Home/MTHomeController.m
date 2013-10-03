@@ -95,6 +95,12 @@
             action: @selector(showDrawer)
             forControlEvents: UIControlEventTouchUpInside];
     }
+	
+	UIImage *backgroundImage = [UIImage imageNamed: @"common-blur-bg"];
+	UIImageView *bgImageView = [[UIImageView alloc] initWithImage: backgroundImage];
+	bgImageView.layer.zPosition = -1;
+	[self.view addSubview: bgImageView];
+//	[self.view sendSubviewToBack: bgImageView];
 }
 
 - (NSInteger)collectionView: (UICollectionView *)collectionView

@@ -26,7 +26,8 @@
 @property (nonatomic, weak) IBOutlet UIImageView *checkInImage;
 @property (nonatomic, weak) IBOutlet UIImageView *avgTimeImage;
 @property (nonatomic, weak) IBOutlet UIImageView *noteImage;
-
+@property (nonatomic, weak) IBOutlet UIImageView *skyImage;
+@property (nonatomic, weak) IBOutlet UIImageView *houseImage;
 
 #pragma mark - Methods
 
@@ -77,6 +78,27 @@
     // create animator
     _dynamicAnimator = [[UIDynamicAnimator alloc]
         initWithReferenceView: self.view];
+}
+
+
+-(void) VC_parallaxEffect
+{
+    //Parallax effect on home background image
+    CGFloat parallaxBoundaryOffset = 20.0f;
+    UIInterpolatingMotionEffect *xAxis = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.x" type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
+    xAxis.minimumRelativeValue = [NSNumber numberWithFloat:-parallaxBoundaryOffset];
+    xAxis.maximumRelativeValue = [NSNumber numberWithFloat:parallaxBoundaryOffset];
+    
+    
+    UIInterpolatingMotionEffect *yAxis = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.y" type:UIInterpolatingMotionEffectTypeTiltAlongVerticalAxis];
+    yAxis.minimumRelativeValue = [NSNumber numberWithFloat:parallaxBoundaryOffset];
+    yAxis.maximumRelativeValue = [NSNumber numberWithFloat:-parallaxBoundaryOffset];
+    
+    UIMotionEffectGroup *group = [[UIMotionEffectGroup alloc] init];
+    group.motionEffects = @[yAxis,xAxis];
+    
+    [self.houseImage addMotionEffect:group];
+	[self.skyImage addMotionEffect: group];
 }
 
 - (void) animateCloud1
