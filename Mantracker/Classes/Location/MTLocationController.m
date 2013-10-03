@@ -88,10 +88,13 @@
 
 - (void) viewDidAppear:(BOOL)animated
 {
-	[self animateCloud: self.cloud1Image
-		withDuration: 45.f toX: -90 resetX: 365];
-	[self animateCloud: self.cloud2Image
-		withDuration: 30.f toX: -85 resetX: 320];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:  ^
+    {
+        [self animateCloud: self.cloud1Image
+            withDuration: 4.f toX: -90 resetX: 365];
+        [self animateCloud: self.cloud2Image
+            withDuration: 3.f toX: -85 resetX: 320];
+    }];
 }
 
 
@@ -104,8 +107,8 @@
     UIInterpolatingMotionEffect *xAxis = [[UIInterpolatingMotionEffect alloc]
 		initWithKeyPath: @"center.x"
 		type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
-    xAxis.minimumRelativeValue = [NSNumber numberWithFloat: -xOffset];
-    xAxis.maximumRelativeValue = [NSNumber numberWithFloat: xOffset];
+    xAxis.minimumRelativeValue = @(-xOffset);
+    xAxis.maximumRelativeValue = @(xOffset);
     
     
     UIInterpolatingMotionEffect *yAxis = [[UIInterpolatingMotionEffect alloc]
@@ -124,12 +127,15 @@
 	withDuration: (CGFloat) duration
 	toX: (CGFloat) toX resetX: (CGFloat) resetX
 {
-	[UIView animateWithDuration: 0.1
-		delay: 0.f
-		options: 0
-		animations: nil
-		completion:
-		^(BOOL finished){
+
+    __weak MTLocationController *weakSelf = self;
+//	[UIView animateWithDuration: 0.1
+//		delay: 0.f
+//		options: 0
+//		animations: nil
+//		completion:
+//		^(BOOL finished){
+
 			[UIView animateWithDuration: duration
 				delay: 0.f
 				options: UIViewAnimationOptionCurveLinear
@@ -149,10 +155,10 @@
 						cloud.frame.size.width,
 						cloud.frame.size.height);
 						
-					[self animateCloud: cloud
+					[weakSelf animateCloud: cloud
 						withDuration: duration toX: toX resetX: resetX];
 				}];
-		}];
+//		}];
 }
 
 - (void)beginFaceDynamicsWithVelocity: (CGPoint)velocity

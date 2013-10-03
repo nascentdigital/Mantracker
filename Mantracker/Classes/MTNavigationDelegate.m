@@ -25,6 +25,12 @@
     fromViewController: (UIViewController *)srcController
     toViewController: (UIViewController *)dstController
 {
+    // disable transition if not set
+    if (NO)
+    {
+        return nil;
+    }
+
     // push operations
     if (operation == UINavigationControllerOperationPush)
     {
