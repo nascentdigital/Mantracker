@@ -169,8 +169,6 @@
     // add collision components
     UICollisionBehavior *collision = [[UICollisionBehavior alloc]
         initWithItems: @[ _faceImage ]];
-    //[collision addBoundaryWithIdentifier: @"title"
-    //    forPath: [UIBezierPath bezierPathWithRect: _titleLabel.frame]];
 	[collision addBoundaryWithIdentifier: @"checkIn"
         forPath: [UIBezierPath bezierPathWithRect: _checkInImage.frame]];
 	[collision addBoundaryWithIdentifier: @"note"
