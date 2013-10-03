@@ -78,13 +78,23 @@
     // create animator
     _dynamicAnimator = [[UIDynamicAnimator alloc]
         initWithReferenceView: self.view];
+		
+	[self addParallaxEffect];
+}
+
+- (void) viewDidAppear:(BOOL)animated
+{
+	[self animateCloud1];
+	[self animateCloud2];
 }
 
 
--(void) VC_parallaxEffect
+#pragma mark - Helper Methods
+
+-(void) addParallaxEffect
 {
     //Parallax effect on home background image
-    CGFloat parallaxBoundaryOffset = 20.0f;
+    CGFloat parallaxBoundaryOffset = 10.0f;
     UIInterpolatingMotionEffect *xAxis = [[UIInterpolatingMotionEffect alloc] initWithKeyPath:@"center.x" type:UIInterpolatingMotionEffectTypeTiltAlongHorizontalAxis];
     xAxis.minimumRelativeValue = [NSNumber numberWithFloat:-parallaxBoundaryOffset];
     xAxis.maximumRelativeValue = [NSNumber numberWithFloat:parallaxBoundaryOffset];
@@ -99,6 +109,8 @@
     
     [self.houseImage addMotionEffect:group];
 	[self.skyImage addMotionEffect: group];
+	[self.cloud1Image addMotionEffect: group];
+	[self.cloud2Image addMotionEffect: group];
 }
 
 - (void) animateCloud1
@@ -111,7 +123,7 @@
 		^(BOOL finished){
 			[UIView animateWithDuration: 45.f
 				delay: 0.f
-				options: UIViewAnimationOptionCurveLinear //UIViewAnimationOptionCurveEaseIn
+				options: UIViewAnimationOptionCurveLinear
 				animations:
 				^{
 					self.cloud1Image.frame = CGRectMake(
@@ -165,14 +177,6 @@
 		}];
 }
 
-- (void) viewDidAppear:(BOOL)animated
-{
-	[self animateCloud1];
-	[self animateCloud2];
-}
-
-#pragma mark - Helper Methods
-
 - (void)beginFaceDynamicsWithVelocity: (CGPoint)velocity
 {
     // stop previous dynamics (if any)
@@ -189,6 +193,10 @@
         initWithItems: @[ _faceImage ]];
     //[collision addBoundaryWithIdentifier: @"title"
     //    forPath: [UIBezierPath bezierPathWithRect: _titleLabel.frame]];
+	[collision addBoundaryWithIdentifier: @"checkIn"
+        forPath: [UIBezierPath bezierPathWithRect: _checkInImage.frame]];
+	[collision addBoundaryWithIdentifier: @"note"
+        forPath: [UIBezierPath bezierPathWithRect: _noteImage.frame]];
     collision.translatesReferenceBoundsIntoBoundary = YES;
     collision.collisionDelegate = self;
     [_dynamicAnimator addBehavior: collision];
