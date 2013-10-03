@@ -6,8 +6,9 @@
 
 #pragma mark Constants
 
-#define MTAnimatorDuration 1.f
+#define MTAnimatorDuration 1.2f
 #define CELL_SPLIT_YOFFSET 68
+#define LOCATION_TITLE_XOFFSET 5
 
 #pragma mark - Internal Interface
 
@@ -120,6 +121,7 @@
 			animations:
 			^{
 				[UIView addKeyframeWithRelativeStartTime: 0.f relativeDuration: 0.2 animations:^{
+					[UIView setAnimationCurve: UIViewAnimationCurveEaseIn];
 					_topSnapEndFrame = CGRectMake(
 						0, -_topSnapView.frame.size.height + CELL_SPLIT_YOFFSET
 							+ locationController.navigationController.navigationBar.frame.size.height
@@ -132,7 +134,7 @@
 					_botSnapView.frame = _botSnapEndFrame;
 				}];
 				
-				[UIView addKeyframeWithRelativeStartTime: 0.3f relativeDuration: 0.7f animations:^{
+				[UIView addKeyframeWithRelativeStartTime: 0.2f relativeDuration: 0.8f animations:^{
 					_topSnapView.alpha = 0.f;
 				}];
 			}
@@ -160,34 +162,38 @@
 		UIView *titleSnap = [locationView resizableSnapshotViewFromRect: locationController.titleImage.frame
 			afterScreenUpdates: NO withCapInsets: UIEdgeInsetsZero];
 		
-		// set snapshot position
-
+		// set title snapshot position
+		titleSnap.frame = locationController.titleImage.frame;
+		
 		// add snapshots to animation container
 		[context.containerView addSubview: _topSnapView];
 		[context.containerView addSubview: _botSnapView];
+		[context.containerView addSubview: titleSnap];
+		
+		// reset properties
+		_topSnapView.alpha = 1.f;
 		homeView.alpha = 0;
 		locationView.alpha = 1.f;
 		
 		// animate back to home
-		[UIView animateKeyframesWithDuration: MTAnimatorDuration
+		[UIView animateWithDuration: MTAnimatorDuration/2
 			delay: 0.f
-			options: 0
+			options: UIViewAnimationOptionCurveEaseOut
 			animations:
 			^{
-				[UIView addKeyframeWithRelativeStartTime: 0.f relativeDuration: 0.4f animations:^{
-					_topSnapView.alpha = 1.f;
-				}];
-				
-				[UIView addKeyframeWithRelativeStartTime: 0.7f relativeDuration: 0.2f animations:^{
-					[UIView setAnimationCurve: UIViewAnimationCurveEaseOut];
-					_topSnapView.frame = _topSnapStartFrame;
-					_botSnapView.frame = _botSnapStartFrame;
-				}];
+				_topSnapView.frame = _topSnapStartFrame;
+				_botSnapView.frame = _botSnapStartFrame;
+				titleSnap.frame = CGRectMake(LOCATION_TITLE_XOFFSET,
+					_topSnapStartFrame.size.height - CELL_SPLIT_YOFFSET,
+					titleSnap.frame.size.width,
+					titleSnap.frame.size.height);
+				titleSnap.alpha = 0.f;
 			}
 			completion:
 			^(BOOL finished){
 				[_topSnapView removeFromSuperview];
 				[_botSnapView removeFromSuperview];
+				[titleSnap removeFromSuperview];
 				homeView.alpha = 1.f;
 				[context completeTransition: finished];
                 

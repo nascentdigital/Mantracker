@@ -38,7 +38,6 @@
 		21C3386117FCAEF900CB6D71 /* pull-down@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 21C3384417FCAEF900CB6D71 /* pull-down@2x.png */; };
 		21C3386617FCC4BF00CB6D71 /* common-cloud1.png in Resources */ = {isa = PBXBuildFile; fileRef = 21C3386417FCC4BF00CB6D71 /* common-cloud1.png */; };
 		21C3386717FCC4BF00CB6D71 /* common-cloud2.png in Resources */ = {isa = PBXBuildFile; fileRef = 21C3386517FCC4BF00CB6D71 /* common-cloud2.png */; };
-		4658CEBD17FB12DC008A7D1A /* MTHomeLocationLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 4658CEBC17FB12DC008A7D1A /* MTHomeLocationLayout.m */; };
 		4658CEC517FB3A32008A7D1A /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 4658CEC417FB3A32008A7D1A /* UIImage+ImageEffects.m */; };
 		4658CECA17FB3DBB008A7D1A /* MTNavigationBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 4658CEC917FB3DBB008A7D1A /* MTNavigationBar.m */; };
 		465C271417FCE03D009C11DC /* MTKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 465C271317FCE03D009C11DC /* MTKVO.m */; };
@@ -113,8 +112,6 @@
 		21C3384417FCAEF900CB6D71 /* pull-down@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pull-down@2x.png"; sourceTree = "<group>"; };
 		21C3386417FCC4BF00CB6D71 /* common-cloud1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "common-cloud1.png"; sourceTree = "<group>"; };
 		21C3386517FCC4BF00CB6D71 /* common-cloud2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "common-cloud2.png"; sourceTree = "<group>"; };
-		4658CEBB17FB12DC008A7D1A /* MTHomeLocationLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTHomeLocationLayout.h; sourceTree = "<group>"; };
-		4658CEBC17FB12DC008A7D1A /* MTHomeLocationLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTHomeLocationLayout.m; sourceTree = "<group>"; };
 		4658CEC317FB3A32008A7D1A /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+ImageEffects.h"; sourceTree = "<group>"; };
 		4658CEC417FB3A32008A7D1A /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 		4658CEC817FB3DBB008A7D1A /* MTNavigationBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTNavigationBar.h; sourceTree = "<group>"; };
@@ -359,8 +356,6 @@
 				46C963AC17FA2C6500686A7F /* MTDrawerController.m */,
 				46C963AE17FA50B300686A7F /* MTDrawerTransitionAnimator.h */,
 				46C963AF17FA50B400686A7F /* MTDrawerTransitionAnimator.m */,
-				4658CEBB17FB12DC008A7D1A /* MTHomeLocationLayout.h */,
-				4658CEBC17FB12DC008A7D1A /* MTHomeLocationLayout.m */,
 				4658CEC817FB3DBB008A7D1A /* MTNavigationBar.h */,
 				4658CEC917FB3DBB008A7D1A /* MTNavigationBar.m */,
 			);
@@ -527,7 +522,6 @@
 				FBF26D2B17F8BB3D0023D29C /* MTLocation.m in Sources */,
 				46C963B017FA50B400686A7F /* MTDrawerTransitionAnimator.m in Sources */,
 				FBF26D2617F8BA280023D29C /* MTHomeController.m in Sources */,
-				4658CEBD17FB12DC008A7D1A /* MTHomeLocationLayout.m in Sources */,
 				FBF26D3117F8C66B0023D29C /* MTLocationController.m in Sources */,
 				465C271417FCE03D009C11DC /* MTKVO.m in Sources */,
 				FBF26D3717F8EEF80023D29C /* MTNavigationDelegate.m in Sources */,
