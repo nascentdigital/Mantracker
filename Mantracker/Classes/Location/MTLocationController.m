@@ -3,7 +3,7 @@
 
 #pragma mark Constants
 
-#define MTFacePlayTimeoutSeconds    1.0
+#define MTFacePlayTimeoutSeconds    2.0
 
 
 #pragma mark - Internal Interface
@@ -32,7 +32,7 @@
 - (void)beginFaceDynamicsWithVelocity: (CGPoint)velocity;
 - (void)cancelFaceDynamics;
 - (void)endFaceDynamics;
-
+- (void)animateFaceCollision;
 
 - (IBAction)onFacePan: (UIGestureRecognizer *)recognizer;
 
@@ -139,9 +139,10 @@
     // add collision components
     UICollisionBehavior *collision = [[UICollisionBehavior alloc]
         initWithItems: @[ _faceImage ]];
-    [collision addBoundaryWithIdentifier: @"title"
-        forPath: [UIBezierPath bezierPathWithRect: _titleLabel.frame]];
+    //[collision addBoundaryWithIdentifier: @"title"
+    //    forPath: [UIBezierPath bezierPathWithRect: _titleLabel.frame]];
     collision.translatesReferenceBoundsIntoBoundary = YES;
+    collision.collisionDelegate = self;
     [_dynamicAnimator addBehavior: collision];
 
     // add dynamics behavior for initial velocity
@@ -188,6 +189,10 @@
         initWithItem: _faceImage
         snapToPoint: _faceStartLocation];        
     [_dynamicAnimator addBehavior: snap];
+}
+
+- (void)animateFaceCollision
+{
 }
 
 - (IBAction)onFacePan: (UIPanGestureRecognizer *)recognizer
@@ -258,6 +263,17 @@
     // start tracking if face is touched
     BOOL faceTouched = CGRectContainsPoint(_faceImage.frame, location);
     return faceTouched;
+}
+
+
+#pragma mark - UICollisionBehaviorDelegate Methods
+
+- (void)collisionBehavior: (UICollisionBehavior *)behavior
+    beganContactForItem: (id <UIDynamicItem>)item
+    withBoundaryIdentifier: (id <NSCopying>)identifier
+    atPoint: (CGPoint)position
+{
+    [self animateFaceCollision];
 }
 
 
