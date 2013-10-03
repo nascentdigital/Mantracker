@@ -214,15 +214,15 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="SXq-SS-2g5" firstAttribute="top" secondItem="043-ug-Y0B" secondAttribute="bottom" id="4PY-08-nz1"/>
+                            <constraint firstAttribute="trailing" secondItem="043-ug-Y0B" secondAttribute="trailing" id="7yP-rD-gXV"/>
+                            <constraint firstItem="043-ug-Y0B" firstAttribute="top" secondItem="i9c-Ym-RHb" secondAttribute="top" id="7zr-0N-xAh"/>
                             <constraint firstAttribute="trailing" secondItem="6LD-K4-scG" secondAttribute="trailing" constant="135" id="D52-fr-L41"/>
-                            <constraint firstItem="043-ug-Y0B" firstAttribute="top" secondItem="i9c-Ym-RHb" secondAttribute="top" id="Gur-1q-qwX"/>
                             <constraint firstItem="6LD-K4-scG" firstAttribute="leading" secondItem="i9c-Ym-RHb" secondAttribute="leading" constant="135" id="Idh-Br-hgk"/>
-                            <constraint firstAttribute="trailing" secondItem="043-ug-Y0B" secondAttribute="trailing" id="V9D-JB-7uk"/>
+                            <constraint firstItem="SXq-SS-2g5" firstAttribute="top" secondItem="043-ug-Y0B" secondAttribute="bottom" id="WjX-cQ-TkF"/>
                             <constraint firstAttribute="trailing" secondItem="K2X-Vk-y0q" secondAttribute="trailing" constant="108" id="XYY-Qe-31O"/>
                             <constraint firstItem="SXq-SS-2g5" firstAttribute="top" secondItem="6LD-K4-scG" secondAttribute="bottom" id="aUN-Ar-z60"/>
+                            <constraint firstItem="043-ug-Y0B" firstAttribute="leading" secondItem="i9c-Ym-RHb" secondAttribute="leading" id="mff-C1-Gpx"/>
                             <constraint firstItem="K2X-Vk-y0q" firstAttribute="leading" secondItem="i9c-Ym-RHb" secondAttribute="leading" constant="108" id="t3O-BU-vAo"/>
-                            <constraint firstItem="043-ug-Y0B" firstAttribute="leading" secondItem="i9c-Ym-RHb" secondAttribute="leading" id="vgo-Eo-bNE"/>
                             <constraint firstItem="K2X-Vk-y0q" firstAttribute="top" secondItem="bAc-R8-HcA" secondAttribute="bottom" constant="20" id="vkr-9D-gsx"/>
                         </constraints>
                     </view>

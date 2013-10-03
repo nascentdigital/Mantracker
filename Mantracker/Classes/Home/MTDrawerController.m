@@ -31,6 +31,10 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    CGPoint center = self.bkgImage.center;
+    center.y += self.view.bounds.size.height;
+    self.bkgImage.center = center;
 }
 
 - (void)didReceiveMemoryWarning

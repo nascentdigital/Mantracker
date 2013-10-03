@@ -22,12 +22,13 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 {
     @private CGRect _toBeginFrame;
     @private CGRect _toEndFrame;
-    @private CGPoint _startingCenter;
     @private UIImage *_blurredImage;
     @private BOOL _useSimpleAnimation;
 }
 
 @property (nonatomic, weak) UIView *dynamicView;
+@property (nonatomic, assign) CGPoint startingCenterForDrawerView;
+@property (nonatomic, assign) CGPoint startingCenterForBlurredView;
 
 @property (nonatomic, strong) id<UIViewControllerContextTransitioning>transitionContext;
 @property (nonatomic, assign, getter = isInteractive) BOOL interactive;
@@ -204,7 +205,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     {    
         toVC.view.frame = _toBeginFrame;
         [containerView addSubview: toVC.view];
-        _startingCenter = toVC.view.center;
+        _startingCenterForDrawerView = toVC.view.center;
         self.dynamicView = toVC.view;
     }
     else
@@ -212,7 +213,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         toVC.view.frame = [transitionContext finalFrameForViewController: toVC];
         [containerView insertSubview: toVC.view
             belowSubview: fromVC.view];
-        _startingCenter = fromVC.view.center;
+        _startingCenterForDrawerView = fromVC.view.center;
         self.dynamicView = fromVC.view;
     }
 }
@@ -329,14 +330,16 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             
             // move the drawer view
             view.center = CGPointMake(
-                _startingCenter.x,
-                _startingCenter.y + translation.y);
+                _startingCenterForDrawerView.x,
+                _startingCenterForDrawerView.y + translation.y);
             
             // move the blurred image
             CGRect navigationBarFrame = self.homeController.navigationController.navigationBar.frame;
             CGRect bluredImgFrame = self.homeController.drawerController.bkgImage.frame;
-            bluredImgFrame.origin.y = bluredImgFrame.size.height - translation.y
-                - navigationBarFrame.origin.y - navigationBarFrame.size.height;
+            bluredImgFrame.origin.y = self.isAppearing == YES
+                ? bluredImgFrame.size.height - translation.y
+                    - navigationBarFrame.origin.y - navigationBarFrame.size.height
+                : -translation.y;
             self.homeController.drawerController.bkgImage.frame = bluredImgFrame;
         
             // update the percentage complete
@@ -367,18 +370,20 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             // determine whether the transition should be cancelled
             self.cancelled = state == UIGestureRecognizerStateCancelled
                 || state == UIGestureRecognizerStateFailed
-                || ABS(translation.y) < height * 0.3f;
+                || ABS(translation.y) < height * 0.5f;
             
-            // line up the dynamic behaviors
+            // create the animator
             self.animator = [[UIDynamicAnimator alloc]
                 initWithReferenceView: containerView];
             self.animator.delegate = self;
             
+            // set the dynamic item behavior
             self.bodyBehavior = [[UIDynamicItemBehavior alloc]
                 init];
-            self.bodyBehavior.elasticity = .3;
+            self.bodyBehavior.elasticity = .3f;
             [self.bodyBehavior addItem: dynamicView];
             
+            // set the collision behavior
             self.collisionBehavior = [[UICollisionBehavior alloc]
                 initWithItems: @[dynamicView]];
             [self.collisionBehavior setTranslatesReferenceBoundsIntoBoundaryWithInsets:
@@ -389,18 +394,19 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
                     0.f)];
             [self.collisionBehavior addItem: dynamicView];
             
+            // set the attachment behavior
             CGPoint anchor = ((self.isAppearing && self.cancelled)
                 || (self.isAppearing == NO && self.cancelled == NO))
-                    ? CGPointMake(dynamicView.center.x, -1 * height)
+                    ? CGPointMake(dynamicView.center.x, -1 * height - 40.f)
                     : CGPointMake(dynamicView.center.x, 0.f);
-                
             self.attachBehavior = [[UIAttachmentBehavior alloc]
                 initWithItem: dynamicView
                 attachedToAnchor: anchor];
             self.attachBehavior.damping = .1;
             self.attachBehavior.frequency = 3.0;
-            self.attachBehavior.length = .5 * frame.size.height;
+            self.attachBehavior.length = .5 * frame.size.height + 20.f;
             
+            // set the gravity behavior
             self.gravityBehavior = [[UIGravityBehavior alloc]
                 initWithItems: @[dynamicView]];
             [self.gravityBehavior setMagnitude: 3.f];
@@ -417,15 +423,17 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
                 // call update on the transition context
                 [weakSelf.transitionContext updateInteractiveTransition:
                     [weakSelf percentComplete]];
+                
+                // move the blurred image
+                CGFloat diff = -height - dynamicView.frame.origin.y;
+                weakSelf.homeController.drawerController.bkgImage.center = CGPointMake(
+                    weakSelf.startingCenterForBlurredView.x,
+                    weakSelf.startingCenterForBlurredView.y + diff);
+                NSLog(@"new blur center %f diff %f", weakSelf.homeController.drawerController.bkgImage.center.y, diff);
             };
             
             // start the dynamics animation
             [self.animator addBehavior:self];
-            
-            // move the blurred image
-            CGRect bluredImgFrame = self.homeController.drawerController.bkgImage.frame;
-            bluredImgFrame.origin.y = 0.f;
-            self.homeController.drawerController.bkgImage.frame = bluredImgFrame;
         }
         break;
 
@@ -474,12 +482,13 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     
     // blur the UIImage
     _blurredImage = [viewImage applyLightEffect];
-
     self.homeController.drawerController.bkgImage.image = _blurredImage;
     
-    CGRect bluredImgFrame = self.homeController.drawerController.bkgImage.frame;
-    bluredImgFrame.origin.y = bluredImgFrame.size.height;
-    self.homeController.drawerController.bkgImage.frame = bluredImgFrame;
+    CGPoint center = self.homeController.drawerController.bkgImage.center;
+    center.y = size.height * 1.5f;
+    self.homeController.drawerController.bkgImage.center = center;
+    _startingCenterForBlurredView = self.homeController.drawerController.bkgImage.center;
+    NSLog(@"starting blur center %f", _startingCenterForBlurredView.y);
 }
 
 - (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext
