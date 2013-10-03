@@ -44,7 +44,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="main-myplace.png" translatesAutoresizingMaskIntoConstraints="NO" id="eOM-o9-n1f" userLabel="background">
-                                            <rect key="frame" x="0.0" y="0.0" width="308" height="94"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="304" height="94"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         </imageView>
