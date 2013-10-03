@@ -23,8 +23,6 @@
             0.f,
             CENTER_BUTTON_WIDTH,
             self.bounds.size.height);
-        [_centerButton setImage: [UIImage imageNamed: @"arrow"]
-            forState: UIControlStateNormal];
         [_centerButton setImageEdgeInsets: UIEdgeInsetsMake(
             30.f,
             10.f,

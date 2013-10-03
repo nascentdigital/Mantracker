@@ -11,5 +11,6 @@
 @interface MTNavigationBar : UINavigationBar
 
 @property (nonatomic, readonly) UIButton *centerButton;
+@property (nonatomic, readonly) UIButton *settingsButton;
 
 @end
