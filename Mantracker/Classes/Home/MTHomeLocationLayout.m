@@ -83,9 +83,9 @@
     for (UIAttachmentBehavior *spring in _dynamicAnimator.behaviors)
     {
         // use touch location to figure out how far that touch location is from each individual spring
-        CGPoint anchorPoint = spring.anchorPoint; // cell's resting position
+        CGPoint anchorPoint = spring.anchorPoint;
         CGFloat distanceFromTouch = fabs(touchLocation.y - anchorPoint.y);
-        CGFloat scrollResistance = distanceFromTouch / 500.f; // the more scroll resistance, the bouncier
+        CGFloat scrollResistance = distanceFromTouch / 500.f;
         
         UICollectionViewLayoutAttributes *item = [spring.items firstObject];
         CGPoint center = item.center;

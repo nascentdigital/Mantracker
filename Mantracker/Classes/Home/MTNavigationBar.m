@@ -12,29 +12,28 @@
 
 @implementation MTNavigationBar
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id)initWithCoder: (NSCoder *)aDecoder
 {
     self = [super initWithCoder: aDecoder];
-    if (self) {
-        // Initialization code
+    if (self)
+    {
+        _centerButton = [UIButton buttonWithType: UIButtonTypeCustom];
+        _centerButton.frame = CGRectMake((
+            self.bounds.size.width - CENTER_BUTTON_WIDTH) * .5f,
+            0.f,
+            CENTER_BUTTON_WIDTH,
+            self.bounds.size.height);
+        [_centerButton setImage: [UIImage imageNamed: @"arrow"]
+            forState: UIControlStateNormal];
+        [_centerButton setImageEdgeInsets: UIEdgeInsetsMake(
+            30.f,
+            10.f,
+            0.f,
+            10.f)];
+        [self addSubview: _centerButton];
     }
-    
-    _centerButton = [UIButton buttonWithType: UIButtonTypeCustom];
-    _centerButton.frame = CGRectMake((self.bounds.size.width - CENTER_BUTTON_WIDTH) * .5f, 0.f, CENTER_BUTTON_WIDTH, self.bounds.size.height);
-    [_centerButton setImage: [UIImage imageNamed: @"arrow"] forState: UIControlStateNormal];
-    [_centerButton setImageEdgeInsets: UIEdgeInsetsMake(30.f, 10.f, 0.f, 10.f)];
-    [self addSubview: _centerButton];
     
     return self;
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end

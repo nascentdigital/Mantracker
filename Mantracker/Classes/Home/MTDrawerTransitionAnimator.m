@@ -12,11 +12,15 @@
 #import "UIImage+ImageEffects.h"
 #import "MTLocationController.h"
 
+
+#define BLUR_BACKGROUND
 #define USE_SIMPLE_ANIMATION 0
+
 #define UPPER_BOUNDS_FOR_DRAWER_BUTTON 0.f
 #define LOWER_BOUNDS_FOR_DRAWER_BUTTON 300.f
 #define VELOCITY_THRESHOLD 600.f
-#define BLUR_BACKGROUND
+
+#define BOUNDARY_OFFSET 1.f
 
 static NSString * const CeilingBoundaryIdentifier = @"ceilingBoundary";
 static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
@@ -302,11 +306,15 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     withBoundaryIdentifier: (id<NSCopying>)identifier
     atPoint: (CGPoint)p
 {
-    if (identifier != nil
-        && [(NSString *)identifier isEqualToString: CeilingBoundaryIdentifier] == YES)
+    if (identifier != nil)
     {
-        CGPoint velocity = [self.bodyBehavior linearVelocityForItem: self.dynamicView];
-        [self.gravityBehavior setMagnitude: 2.5f * velocity.y * 0.001f];
+        if ([(NSString *)identifier isEqualToString: CeilingBoundaryIdentifier] == YES
+            || [(NSString *)identifier isEqualToString: GroundBoundaryIdentifier] == YES)
+        {
+            CGPoint velocity = [self.bodyBehavior linearVelocityForItem: self.dynamicView];
+            CGFloat magnitude = 5.f * fabs(velocity.y) * .001f;
+            [self.gravityBehavior setMagnitude: fmaxf(1.f, magnitude)];
+        }
     }
 }
 
@@ -423,10 +431,11 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             self.bodyBehavior = [[UIDynamicItemBehavior alloc]
                 initWithItems: @[dynamicView]];
             self.bodyBehavior.density = pullUpDrawer == YES
-                ? 4.f
+                ? 5.f
                 : 1.f;
+            self.bodyBehavior.elasticity = 0.f;
             self.bodyBehavior.allowsRotation = NO;
-            [self.bodyBehavior addLinearVelocity: velocity
+            [self.bodyBehavior addLinearVelocity: CGPointMake(0.f, velocity.y)
                 forItem: dynamicView];
             
             // set gravity behavior
@@ -442,16 +451,25 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             self.collisionBehavior = [[UICollisionBehavior alloc]
                 initWithItems: @[dynamicView]];
             self.collisionBehavior.collisionDelegate = self;
-            CGFloat ceiling = -height - 100.f;
+            CGFloat ceiling = - height - BOUNDARY_OFFSET;
             [self.collisionBehavior setTranslatesReferenceBoundsIntoBoundaryWithInsets:
                 UIEdgeInsetsMake(
                     ceiling,
                     0.f,
-                    0.f,
+                    -BOUNDARY_OFFSET,
                     0.f)];
-            [self.collisionBehavior addBoundaryWithIdentifier: CeilingBoundaryIdentifier
-                fromPoint: CGPointMake(0.f, ceiling)
-                toPoint: CGPointMake(frame.size.width, ceiling)];
+            if (pullUpDrawer == YES)
+            {
+                [self.collisionBehavior addBoundaryWithIdentifier: CeilingBoundaryIdentifier
+                    fromPoint: CGPointMake(0.f, ceiling)
+                    toPoint: CGPointMake(frame.size.width, ceiling)];
+            }
+            else
+            {
+                [self.collisionBehavior addBoundaryWithIdentifier: GroundBoundaryIdentifier
+                    fromPoint: CGPointMake(0.f, height + BOUNDARY_OFFSET)
+                    toPoint: CGPointMake(frame.size.width, height + BOUNDARY_OFFSET)];
+            }
             [self.collisionBehavior addItem: dynamicView];
             
             // add all child dynamic behaviors
@@ -550,14 +568,14 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 {
     return (([visibleController isKindOfClass: [MTHomeController class]]
         || [visibleController isKindOfClass: [MTLocationController class]])
-            && point.y < _navigationBarBottom + UPPER_BOUNDS_FOR_DRAWER_BUTTON);
+            && point.y <= _navigationBarBottom + UPPER_BOUNDS_FOR_DRAWER_BUTTON);
 }
 
 - (BOOL)MT_panGestureToPullUpDrawer: (UIViewController *)visibleController
     touchPoint: (CGPoint)point
 {
     return ([visibleController isKindOfClass: [MTDrawerController class]]
-        && point.y > self.homeController.navigationController.view.frame.size.height
+        && point.y >= self.homeController.navigationController.view.frame.size.height
             - LOWER_BOUNDS_FOR_DRAWER_BUTTON);
 }
 
