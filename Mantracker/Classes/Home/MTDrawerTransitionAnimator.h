@@ -13,6 +13,7 @@
     UIViewControllerAnimatedTransitioning,
     UIViewControllerInteractiveTransitioning,
     UIDynamicAnimatorDelegate,
+    UICollisionBehaviorDelegate,
     UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) MTHomeController *homeController;

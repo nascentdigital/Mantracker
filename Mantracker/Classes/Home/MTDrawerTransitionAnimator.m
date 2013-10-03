@@ -15,8 +15,10 @@
 #define USE_SIMPLE_ANIMATION 0
 #define UPPER_BOUNDS_FOR_DRAWER_BUTTON 0.f
 #define LOWER_BOUNDS_FOR_DRAWER_BUTTON 300.f
+#define VELOCITY_THRESHOLD 600.f
 #define BLUR_BACKGROUND
 
+static NSString * const CeilingBoundaryIdentifier = @"ceilingBoundary";
 static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 @interface MTDrawerTransitionAnimator()
@@ -293,12 +295,27 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 }
 
 
+#pragma mark - UICollisionDelegate Methods
+
+- (void)collisionBehavior: (UICollisionBehavior *)behavior
+    beganContactForItem: (id<UIDynamicItem>)item
+    withBoundaryIdentifier: (id<NSCopying>)identifier
+    atPoint: (CGPoint)p
+{
+    if (identifier != nil
+        && [(NSString *)identifier isEqualToString: CeilingBoundaryIdentifier] == YES)
+    {
+        CGPoint velocity = [self.bodyBehavior linearVelocityForItem: self.dynamicView];
+        [self.gravityBehavior setMagnitude: 2.5f * velocity.y * 0.001f];
+    }
+}
+
+
 #pragma mark - Public Methods
 
 - (void)handleGesture:(UIPanGestureRecognizer *)recognizer
 {
-    CGPoint translation = [recognizer translationInView:
-        self.homeController.navigationController.view];
+    CGPoint translation = [recognizer translationInView: recognizer.view];
 
     UIGestureRecognizerState state = recognizer.state;
     switch (state)
@@ -309,7 +326,8 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             self.interactive = YES;
             
             // determine whether we are presenting or dismissing the drawer and start the transition
-            CGPoint point =  [recognizer locationInView: self.homeController.navigationController.view];
+            CGPoint point =  [recognizer locationInView:
+                recognizer.view];
 
             UIViewController *visibleController =
                 self.homeController.navigationController.visibleViewController;
@@ -377,19 +395,24 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             CGRect frame = dynamicView.frame;
             float height = frame.size.height;
             
-            CGPoint velocity = [recognizer velocityInView:
-                self.homeController.navigationController.view];
-            CGFloat velocityThreshold = 600.f;
-            
+            CGPoint velocity = [recognizer velocityInView: recognizer.view];
+            CGPoint point =  [recognizer locationInView:
+                            recognizer.view];
+
             // determine whether the transition should be cancelled
             self.cancelled = state == UIGestureRecognizerStateCancelled
                 || state == UIGestureRecognizerStateFailed
-                || (self.isAppearing && velocity.y < velocityThreshold)
-                || (self.isAppearing == NO && velocity.y > -velocityThreshold)
-                || (velocity.y < ABS(velocityThreshold) && ABS(translation.y) < height * 0.33f);
+                || (self.isAppearing
+                    && velocity.y < VELOCITY_THRESHOLD
+                    && point.y < height * 0.5f)
+                || (self.isAppearing == NO
+                    && velocity.y > -VELOCITY_THRESHOLD
+                    && point.y > height * 0.5f);
             
-            BOOL pullUpDrawer = ((self.isAppearing && self.cancelled)
-                || (self.isAppearing == NO && self.cancelled == NO));
+            BOOL pullUpDrawer = ((self.isAppearing
+                    && self.cancelled)
+                || (self.isAppearing == NO
+                    && self.cancelled == NO));
             
             // create the animator
             self.animator = [[UIDynamicAnimator alloc]
@@ -398,9 +421,13 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             
             // set the dynamic item behavior
             self.bodyBehavior = [[UIDynamicItemBehavior alloc]
-                init];
-            self.bodyBehavior.elasticity = .3f;
-            [self.bodyBehavior addItem: dynamicView];
+                initWithItems: @[dynamicView]];
+            self.bodyBehavior.density = pullUpDrawer == YES
+                ? 4.f
+                : 1.f;
+            self.bodyBehavior.allowsRotation = NO;
+            [self.bodyBehavior addLinearVelocity: velocity
+                forItem: dynamicView];
             
             // set gravity behavior
             self.gravityBehavior = [[UIGravityBehavior alloc]
@@ -414,12 +441,17 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             // set the collision behavior
             self.collisionBehavior = [[UICollisionBehavior alloc]
                 initWithItems: @[dynamicView]];
+            self.collisionBehavior.collisionDelegate = self;
+            CGFloat ceiling = -height - 100.f;
             [self.collisionBehavior setTranslatesReferenceBoundsIntoBoundaryWithInsets:
                 UIEdgeInsetsMake(
-                    -height - 40.f,
+                    ceiling,
                     0.f,
                     0.f,
                     0.f)];
+            [self.collisionBehavior addBoundaryWithIdentifier: CeilingBoundaryIdentifier
+                fromPoint: CGPointMake(0.f, ceiling)
+                toPoint: CGPointMake(frame.size.width, ceiling)];
             [self.collisionBehavior addItem: dynamicView];
             
             // add all child dynamic behaviors
@@ -489,7 +521,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext
 {
-    NSLog(@"initialize transition");
     _useSimpleAnimation = USE_SIMPLE_ANIMATION == 1;
 
     self.transitionContext = transitionContext;
