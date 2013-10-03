@@ -12,5 +12,6 @@
 
 @property (nonatomic, strong) MTLocation *location;
 @property (nonatomic, strong) NSIndexPath *locationIndexPath;
+@property (nonatomic, weak) IBOutlet UIImageView *titleImage;
 
 @end  // @interface MTLocationController

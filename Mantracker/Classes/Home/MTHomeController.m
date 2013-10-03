@@ -36,12 +36,12 @@
     {
         // initialize locations
 			_locations = [NSMutableArray arrayWithObjects:
-			  [MTLocation locationWithName: @"My place"
-				image: [UIImage imageNamed: @"main-myplace"]],
 			  [MTLocation locationWithName: @"Kings Bar"
 				image: [UIImage imageNamed: @"main-kingsbar"]],
 			  [MTLocation locationWithName: @"Work"
 				image: [UIImage imageNamed: @"main-work"]],
+			  [MTLocation locationWithName: @"My place"
+				image: [UIImage imageNamed: @"main-myplace"]],
 			  [MTLocation locationWithName: @"Mystery"
 				image: [UIImage imageNamed: @"main-mystery"]],
 			  [MTLocation locationWithName: @"Mike's"

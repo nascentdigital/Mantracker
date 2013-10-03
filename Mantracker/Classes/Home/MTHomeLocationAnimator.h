@@ -4,17 +4,13 @@
 
 @class MTHomeController;
 
-@interface MTHomeLocationAnimator : UIPercentDrivenInteractiveTransition
+@interface MTHomeLocationAnimator : NSObject
 	<UIViewControllerAnimatedTransitioning,
 		UIGestureRecognizerDelegate,
-		UIViewControllerInteractiveTransitioning,
 		UIViewControllerTransitioningDelegate>
 
 
 @property (nonatomic, weak) MTHomeController *homeController;
-
-
-- (void) handlePinch: (UIPinchGestureRecognizer *) gesture;
 
 
 @end  // @interface MTHomeLocationAnimator
