@@ -84,8 +84,10 @@
 
 - (void) viewDidAppear:(BOOL)animated
 {
-	[self animateCloud1];
-	[self animateCloud2];
+	[self animateCloud: self.cloud1Image
+		withDuration: 45.f toX: -90 resetX: 365];
+	[self animateCloud: self.cloud2Image
+		withDuration: 30.f toX: -85 resetX: 320];
 }
 
 
@@ -113,7 +115,9 @@
 	[self.cloud2Image addMotionEffect: group];
 }
 
-- (void) animateCloud1
+- (void) animateCloud: (UIImageView *) cloud
+	withDuration: (CGFloat) duration
+	toX: (CGFloat) toX resetX: (CGFloat) resetX
 {
 	[UIView animateWithDuration: 0.1
 		delay: 0.f
@@ -121,58 +125,27 @@
 		animations: nil
 		completion:
 		^(BOOL finished){
-			[UIView animateWithDuration: 45.f
+			[UIView animateWithDuration: duration
 				delay: 0.f
 				options: UIViewAnimationOptionCurveLinear
 				animations:
 				^{
-					self.cloud1Image.frame = CGRectMake(
-						-90,
-						self.cloud1Image.frame.origin.y,
-						self.cloud1Image.frame.size.width,
-						self.cloud1Image.frame.size.height);
+					cloud.frame = CGRectMake(
+						toX,
+						cloud.frame.origin.y,
+						cloud.frame.size.width,
+						cloud.frame.size.height);
 				}
 				completion:
 				^(BOOL finished){
-					self.cloud1Image.frame = CGRectMake(
-						365,
-						self.cloud1Image.frame.origin.y,
-						self.cloud1Image.frame.size.width,
-						self.cloud1Image.frame.size.height);
-					[self animateCloud1];
-				}];
-		}];
-		
-	
-}
-
-- (void) animateCloud2
-{
-	[UIView animateWithDuration: 0.1
-		delay: 0.f
-		options: 0
-		animations: nil
-		completion:
-		^(BOOL finished){
-			[UIView animateWithDuration: 30.f
-				delay: 0.f
-				options: UIViewAnimationOptionCurveLinear//UIViewAnimationOptionCurveEaseIn
-				animations:
-				^{
-					self.cloud2Image.frame = CGRectMake(
-						-85,
-						self.cloud2Image.frame.origin.y,
-						self.cloud2Image.frame.size.width,
-						self.cloud2Image.frame.size.height);
-				}
-				completion:
-				^(BOOL finished){
-					self.cloud2Image.frame = CGRectMake(
-						320,
-						self.cloud2Image.frame.origin.y,
-						self.cloud2Image.frame.size.width,
-						self.cloud2Image.frame.size.height);
-					[self animateCloud2];
+					cloud.frame = CGRectMake(
+						resetX,
+						cloud.frame.origin.y,
+						cloud.frame.size.width,
+						cloud.frame.size.height);
+						
+					[self animateCloud: cloud
+						withDuration: duration toX: toX resetX: resetX];
 				}];
 		}];
 }
