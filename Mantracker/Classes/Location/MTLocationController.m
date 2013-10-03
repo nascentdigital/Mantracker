@@ -13,7 +13,6 @@
     @private __strong UIDynamicAnimator *_dynamicAnimator;
     @private CGPoint _faceStartLocation;
     @private CGPoint _faceOffset;
-    @private BOOL _facePositionTracking;
 }
 
 #pragma mark - Properties
@@ -103,26 +102,6 @@
 		}];
 }
 
-- (void)observeValueForKeyPath: (NSString *)keyPath
-    ofObject: (id)object
-    change: (NSDictionary *)change
-    context: (void *)context
-{
-    // handle center changes
-    if (object == _faceImage)
-    {
-        // cancel any existing timer
-        [NSObject cancelPreviousPerformRequestsWithTarget: self
-            selector: @selector(endFaceDynamics)
-            object: nil];
-        
-        // restart timer
-        [self performSelector: @selector(endFaceDynamics)
-            withObject: nil
-            afterDelay: MTFacePlayTimeoutSeconds];
-    }
-}
-
 #pragma mark - Helper Methods
 
 - (void)beginFaceDynamicsWithVelocity: (CGPoint)velocity
@@ -151,13 +130,6 @@
     [properties addLinearVelocity: velocity
         forItem: _faceImage];
     [_dynamicAnimator addBehavior: properties];
-    
-    // start observing animations
-    [_faceImage addObserver: self
-        forKeyPath: @"center"
-        options: NSKeyValueObservingOptionNew
-        context: NULL];
-    _facePositionTracking = YES;
 }
 
 - (void)cancelFaceDynamics
@@ -166,14 +138,6 @@
     [NSObject cancelPreviousPerformRequestsWithTarget: self
         selector: @selector(endFaceDynamics)
         object: nil];
-
-    // stop observing
-    if (_facePositionTracking)
-    {
-        _facePositionTracking = NO;
-        [_faceImage removeObserver: self
-            forKeyPath: @"center"];
-    }
 
     // tear down animator
     [_dynamicAnimator removeAllBehaviors];
@@ -193,6 +157,17 @@
 
 - (void)animateFaceCollision
 {
+    NSLog(@"TODO: animate face collision");
+
+    // cancel any existing timer
+    [NSObject cancelPreviousPerformRequestsWithTarget: self
+        selector: @selector(endFaceDynamics)
+        object: nil];
+    
+    // restart timer
+    [self performSelector: @selector(endFaceDynamics)
+        withObject: nil
+        afterDelay: MTFacePlayTimeoutSeconds];
 }
 
 - (IBAction)onFacePan: (UIPanGestureRecognizer *)recognizer
