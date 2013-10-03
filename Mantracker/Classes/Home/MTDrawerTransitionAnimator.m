@@ -380,13 +380,13 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             CGPoint velocity = [recognizer velocityInView:
                 self.homeController.navigationController.view];
             CGFloat velocityThreshold = 600.f;
-            
+
             // determine whether the transition should be cancelled
             self.cancelled = state == UIGestureRecognizerStateCancelled
                 || state == UIGestureRecognizerStateFailed
                 || (self.isAppearing && velocity.y < velocityThreshold)
                 || (self.isAppearing == NO && velocity.y > -velocityThreshold)
-                || (velocity.y < ABS(velocityThreshold) && ABS(translation.y) < height * 0.33f);
+                || (ABS(velocity.y) < ABS(velocityThreshold) && ABS(translation.y) < height * 0.5f);
             
             BOOL pullUpDrawer = ((self.isAppearing && self.cancelled)
                 || (self.isAppearing == NO && self.cancelled == NO));
@@ -400,6 +400,8 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             self.bodyBehavior = [[UIDynamicItemBehavior alloc]
                 init];
             self.bodyBehavior.elasticity = .3f;
+            [self.bodyBehavior addLinearVelocity: velocity
+                forItem: dynamicView];
             [self.bodyBehavior addItem: dynamicView];
             
             // set gravity behavior
