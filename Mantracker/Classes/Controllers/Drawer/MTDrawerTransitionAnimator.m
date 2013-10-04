@@ -246,9 +246,12 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (BOOL)gestureRecognizerShouldBegin: (UIGestureRecognizer *)recognizer
 {
+    CGPoint point =  [recognizer locationInView: self.homeController.navigationController.view];
+    
     if ([recognizer isKindOfClass: [UITapGestureRecognizer class]] == YES)
     {
-        return YES;
+        return (point.x > 50.f
+            && point.y <= _navigationBarBottom + UPPER_BOUNDS_FOR_DRAWER_BUTTON);
     }
     else if ([recognizer isKindOfClass: [UIPanGestureRecognizer class]] == YES)
     {
@@ -266,9 +269,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         {
             return NO;
         }
-
-        CGPoint point =  [recognizer locationInView: recognizer.view];
-
+        
         UIViewController *visibleController =
             self.homeController.navigationController.visibleViewController;
                 
