@@ -13,16 +13,19 @@
 #import "MTLocationController.h"
 #import "MTSettingsManager.h"
 
-//#define USE_DEFAULT_TRANSITION
+
+#pragma mark - Constants
 
 #define UPPER_BOUNDS_FOR_DRAWER_BUTTON 0.f
 #define LOWER_BOUNDS_FOR_DRAWER_BUTTON 300.f
 #define VELOCITY_THRESHOLD 600.f
-
 #define BOUNDARY_OFFSET 1.f
 
 static NSString * const CeilingBoundaryIdentifier = @"ceilingBoundary";
 static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
+
+
+#pragma mark - Class Interface
 
 @interface MTDrawerTransitionAnimator()
 {
@@ -57,6 +60,9 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 + (CGPoint)centerPointForFrame: (CGRect)frame;
 
 @end
+
+
+#pragma mark - Class Implementaion
 
 @implementation MTDrawerTransitionAnimator
 
