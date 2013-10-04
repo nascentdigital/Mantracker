@@ -35,7 +35,7 @@
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                         </collectionViewFlowLayout>
-                        <imageView key="backgroundView" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="common-blur-bg.png" id="K08-Fa-ZhN">
+                        <imageView key="backgroundView" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="common-homebg7.png" id="K08-Fa-ZhN">
                             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </imageView>
@@ -411,9 +411,9 @@
     </scenes>
     <resources>
         <image name="bar-pulldown.png" width="40" height="3"/>
-        <image name="common-blur-bg.png" width="340" height="588"/>
         <image name="common-cloud1.png" width="258" height="106"/>
         <image name="common-cloud2.png" width="254" height="145"/>
+        <image name="common-homebg7.png" width="340" height="588"/>
         <image name="common-house-cut.png" width="680" height="1176"/>
         <image name="common-icon-settings.png" width="16" height="16"/>
         <image name="common-sky-cut.png" width="680" height="1176"/>

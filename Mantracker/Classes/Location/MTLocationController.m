@@ -83,7 +83,7 @@
 	[self addParallaxEffectTo: self.skyImage withXOffset: 10.f yOffset: 20.f];
 	[self addParallaxEffectTo: self.cloud1Image withXOffset: 10.f yOffset: 20.f];
 	[self addParallaxEffectTo: self.cloud2Image withXOffset: 10.f yOffset: 20.f];
-	[self addParallaxEffectTo:self.faceImage withXOffset: 5.f yOffset: 10.f];
+	[self addParallaxEffectTo: self.faceImage withXOffset: 5.f yOffset: 10.f];
 
     [self performSelector: @selector(animateClouds)
         withObject: nil

@@ -15,6 +15,8 @@
     @private UIPanGestureRecognizer *_panGestureRecognizer;
     @private MTDrawerTransitionAnimator *_drawerTransitionAnimator;
 	@private MTHomeLocationAnimator *_homeLocationAnimator;
+	@private NSMutableArray *_fadedCellImages;
+	@private NSMutableArray *_sameCellImages;
 }
 
 
@@ -34,19 +36,32 @@
     // initialize instance
     if ((self = [super initWithCoder: decoder]) != nil)
     {
+		_fadedCellImages = [[NSMutableArray alloc] initWithObjects:
+			[UIImage imageNamed: @"main-kingsbar"],
+			[UIImage imageNamed: @"main-work"],
+			[UIImage imageNamed: @"main-myplace"],
+			[UIImage imageNamed: @"main-mystery"],
+			[UIImage imageNamed: @"main-mikes"], nil];
+			
+		_sameCellImages = [[NSMutableArray alloc] initWithObjects:
+			[UIImage imageNamed: @"samecolour-kingsbar"],
+			[UIImage imageNamed: @"samecolour-work"],
+			[UIImage imageNamed: @"samecolour-myplace"],
+			[UIImage imageNamed: @"samecolour-mystery"],
+			[UIImage imageNamed: @"samecolour-mikes"], nil];
+			
         // initialize locations
-			_locations = [NSMutableArray arrayWithObjects:
-			  [MTLocation locationWithName: @"Kings Bar"
-				image: [UIImage imageNamed: @"main-kingsbar"]],
-			  [MTLocation locationWithName: @"Work"
-				image: [UIImage imageNamed: @"main-work"]],
-			  [MTLocation locationWithName: @"My place"
-				image: [UIImage imageNamed: @"main-myplace"]],
-			  [MTLocation locationWithName: @"Mystery"
-				image: [UIImage imageNamed: @"main-mystery"]],
-			  [MTLocation locationWithName: @"Mike's"
-				image: [UIImage imageNamed: @"main-mikes"]],
-			  nil];
+		_locations = [NSMutableArray arrayWithObjects:
+		  [MTLocation locationWithName: @"Kings Bar"
+			image: _sameCellImages[0]],
+		  [MTLocation locationWithName: @"Work"
+			image: _sameCellImages[1]],
+		  [MTLocation locationWithName: @"My place"
+			image: _sameCellImages[2]],
+		  [MTLocation locationWithName: @"Mystery"
+			image: _sameCellImages[3]],
+		  [MTLocation locationWithName: @"Mike's"
+			image: _sameCellImages[4]], nil];
     }
     
     // return instance
