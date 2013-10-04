@@ -4,7 +4,6 @@
 #import "MTLocation.h"
 #import "MTDrawerController.h"
 #import "MTDrawerTransitionAnimator.h"
-#import "MTNavigationBar.h"
 #import "MTHomeLocationAnimator.h"
 
 
@@ -12,6 +11,7 @@
 
 @interface MTHomeController ()
 {
+    @private UITapGestureRecognizer *_tapGestureRecognizer;
     @private UIPanGestureRecognizer *_panGestureRecognizer;
     @private MTDrawerTransitionAnimator *_drawerTransitionAnimator;
 	@private MTHomeLocationAnimator *_homeLocationAnimator;
@@ -85,26 +85,26 @@
 	_homeLocationAnimator = [[MTHomeLocationAnimator alloc] init];
 	_homeLocationAnimator.homeController = self;
 	
-    // set up gesture recognizers
+    // set up pan gesture recognizer
     _panGestureRecognizer = [[UIPanGestureRecognizer alloc]
         initWithTarget: _drawerTransitionAnimator
         action: @selector(handleGesture:)];
     _drawerController.transitioningDelegate = _drawerTransitionAnimator;
     _panGestureRecognizer.delegate = _drawerTransitionAnimator;
     
-    // add pan gesture recognizer
-    [[UIApplication sharedApplication].delegate.window addGestureRecognizer: _panGestureRecognizer];
+    // set up tap gesture recognizer
+    _tapGestureRecognizer = [[UITapGestureRecognizer alloc]
+        initWithTarget: _drawerTransitionAnimator
+        action: @selector(showDrawer)];
+    _tapGestureRecognizer.delegate = _drawerTransitionAnimator;
+    
+    // add pan and tap gesture recognizers
+    UIView *window = [UIApplication sharedApplication].delegate.window;
+    [window addGestureRecognizer: _panGestureRecognizer];
+    [window addGestureRecognizer: _tapGestureRecognizer];
     
     // set the transition delegate on the drawer controller
     _drawerController.transitioningDelegate = _drawerTransitionAnimator;
-    
-    if ([self.navigationController.navigationBar isKindOfClass: [MTNavigationBar class]])
-    {
-        [((MTNavigationBar *)self.navigationController.navigationBar).centerButton
-            addTarget: _drawerTransitionAnimator
-            action: @selector(showDrawer)
-            forControlEvents: UIControlEventTouchUpInside];
-    }
 	
 	UIImage *backgroundImage = [UIImage imageNamed: @"common-blur-bg"];
 	UIImageView *bgImageView = [[UIImageView alloc]

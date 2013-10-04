@@ -240,35 +240,42 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (BOOL)gestureRecognizerShouldBegin: (UIGestureRecognizer *)recognizer
 {
-    MTSettingsManager *settingsManager = [MTSettingsManager sharedInstance];
-    if (settingsManager.interactiveTransitions == NO
-        || settingsManager.customTransitions == NO)
-    {
-        return NO;
-    }
-    
-    _useCustomTransition = YES;
-
-    if (recognizer.numberOfTouches != 1
-        || self.transitionContext != nil)
-    {
-        return NO;
-    }
-
-    CGPoint point =  [recognizer locationInView: recognizer.view];
-
-    UIViewController *visibleController =
-        self.homeController.navigationController.visibleViewController;
-            
-    if ([self MT_panGestureToPullDownDrawer: visibleController
-        touchPoint: point] == YES)
+    if ([recognizer isKindOfClass: [UITapGestureRecognizer class]] == YES)
     {
         return YES;
     }
-    else if ([self MT_panGestureToPullUpDrawer: visibleController
-        touchPoint: point] == YES)
+    else if ([recognizer isKindOfClass: [UIPanGestureRecognizer class]] == YES)
     {
-        return YES;
+        MTSettingsManager *settingsManager = [MTSettingsManager sharedInstance];
+        if (settingsManager.interactiveTransitions == NO
+            || settingsManager.customTransitions == NO)
+        {
+            return NO;
+        }
+        
+        _useCustomTransition = YES;
+
+        if (recognizer.numberOfTouches != 1
+            || self.transitionContext != nil)
+        {
+            return NO;
+        }
+
+        CGPoint point =  [recognizer locationInView: recognizer.view];
+
+        UIViewController *visibleController =
+            self.homeController.navigationController.visibleViewController;
+                
+        if ([self MT_panGestureToPullDownDrawer: visibleController
+            touchPoint: point] == YES)
+        {
+            return YES;
+        }
+        else if ([self MT_panGestureToPullUpDrawer: visibleController
+            touchPoint: point] == YES)
+        {
+            return YES;
+        }
     }
     return NO;
 }
