@@ -5,6 +5,7 @@
 #import "MTDrawerController.h"
 #import "MTDrawerTransitionAnimator.h"
 #import "MTHomeLocationAnimator.h"
+#import "MTSettingsManager.h"
 
 
 #pragma mark Internal Interface
@@ -15,7 +16,6 @@
     @private UIPanGestureRecognizer *_panGestureRecognizer;
     @private MTDrawerTransitionAnimator *_drawerTransitionAnimator;
 	@private MTHomeLocationAnimator *_homeLocationAnimator;
-	@private NSMutableArray *_fadedCellImages;
 	@private NSMutableArray *_sameCellImages;
 }
 
@@ -36,33 +36,7 @@
     // initialize instance
     if ((self = [super initWithCoder: decoder]) != nil)
     {
-		_fadedCellImages = [[NSMutableArray alloc] initWithObjects:
-			[UIImage imageNamed: @"main-kingsbar"],
-			[UIImage imageNamed: @"main-work"],
-			[UIImage imageNamed: @"main-myplace"],
-			[UIImage imageNamed: @"main-mystery"],
-			[UIImage imageNamed: @"main-mikes"], nil];
-			
-		_sameCellImages = [[NSMutableArray alloc] initWithObjects:
-			[UIImage imageNamed: @"samecolour-kingsbar"],
-			[UIImage imageNamed: @"samecolour-work"],
-			[UIImage imageNamed: @"samecolour-myplace"],
-			[UIImage imageNamed: @"samecolour-mystery"],
-			[UIImage imageNamed: @"samecolour-mikes"], nil];
-			
-        // initialize locations
-		_locations = [NSMutableArray arrayWithObjects:
-		  [MTLocation locationWithName: @"Kings Bar"
-			image: _sameCellImages[0]],
-		  [MTLocation locationWithName: @"Work"
-			image: _sameCellImages[1]],
-		  [MTLocation locationWithName: @"My place"
-			image: _sameCellImages[2]],
-		  [MTLocation locationWithName: @"Mystery"
-			image: _sameCellImages[3]],
-		  [MTLocation locationWithName: @"Mike's"
-			image: _sameCellImages[4]], nil];
-    }
+	}
     
     // return instance
     return self;
@@ -105,12 +79,48 @@
     
     // set the transition delegate on the drawer controller
     _drawerController.transitioningDelegate = _drawerTransitionAnimator;
+    
+    if ([self.navigationController.navigationBar isKindOfClass: [MTNavigationBar class]])
+    {
+        [((MTNavigationBar *)self.navigationController.navigationBar).centerButton
+            addTarget: _drawerTransitionAnimator
+            action: @selector(showDrawer)
+            forControlEvents: UIControlEventTouchUpInside];
+    }
+}
+
+- (void) viewWillAppear:(BOOL)animated
+{
+	if ([MTSettingsManager sharedInstance].environmentalFeedback)
+	{
+		_locations = [NSMutableArray arrayWithObjects:
+		  [MTLocation locationWithName: @"Kings Bar"
+			image: [UIImage imageNamed: @"main-kingsbar"]],
+		  [MTLocation locationWithName: @"Work"
+			image: [UIImage imageNamed: @"main-work"]],
+		  [MTLocation locationWithName: @"My place"
+			image: [UIImage imageNamed: @"main-myplace"]],
+		  [MTLocation locationWithName: @"Mystery"
+			image: [UIImage imageNamed: @"main-mystery"]],
+		  [MTLocation locationWithName: @"Mike's"
+			image: [UIImage imageNamed: @"main-mikes"]], nil];
+	}
+	else
+	{
+		_locations = [NSMutableArray arrayWithObjects:
+		  [MTLocation locationWithName: @"Kings Bar"
+			image: [UIImage imageNamed: @"samecolour-kingsbar"]],
+		  [MTLocation locationWithName: @"Work"
+			image: [UIImage imageNamed: @"samecolour-work"]],
+		  [MTLocation locationWithName: @"My place"
+			image: [UIImage imageNamed: @"samecolour-myplace"]],
+		  [MTLocation locationWithName: @"Mystery"
+			image: [UIImage imageNamed: @"samecolour-mystery"]],
+		  [MTLocation locationWithName: @"Mike's"
+			image: [UIImage imageNamed: @"samecolour-mikes"]], nil];
+	}
 	
-	UIImage *backgroundImage = [UIImage imageNamed: @"common-blur-bg"];
-	UIImageView *bgImageView = [[UIImageView alloc]
-        initWithImage: backgroundImage];
-	bgImageView.layer.zPosition = -1;
-	[self.view addSubview: bgImageView];
+	[self.collectionView reloadData];
 }
 
 - (NSInteger)collectionView: (UICollectionView *)collectionView

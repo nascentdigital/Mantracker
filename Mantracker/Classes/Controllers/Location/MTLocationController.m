@@ -1,5 +1,5 @@
 #import "MTLocationController.h"
-
+#import "MTSettingsManager.h"
 
 #pragma mark Constants
 
@@ -78,43 +78,41 @@
     _dynamicAnimator = [[UIDynamicAnimator alloc]
         initWithReferenceView: self.view];
     _dynamicAnimator.delegate = self;
-	
-	[self addParallaxEffectTo: self.houseImage withXOffset: 10.f yOffset: 20.f];
-	[self addParallaxEffectTo: self.skyImage withXOffset: 10.f yOffset: 20.f];
-	[self addParallaxEffectTo: self.cloud1Image withXOffset: 10.f yOffset: 20.f];
-	[self addParallaxEffectTo: self.cloud2Image withXOffset: 10.f yOffset: 20.f];
-	[self addParallaxEffectTo: self.faceImage withXOffset: 5.f yOffset: 10.f];
-
-    [self performSelector: @selector(animateClouds)
-        withObject: nil
-        afterDelay: 1.2];
 }
 
-- (void)animateClouds
+- (void) viewWillAppear:(BOOL)animated
 {
-    // HACK: the transitions prevent this animation from start right away, so we delay it
-    // TODO: setup a 1st pass where sky is empty
+	[super viewWillAppear: animated];
+	
+	if ([MTSettingsManager sharedInstance].enableParallax)
+	{
+		[self addParallaxEffectTo: self.houseImage withXOffset: 10.f yOffset: 20.f];
+		[self addParallaxEffectTo: self.skyImage withXOffset: 10.f yOffset: 20.f];
+		[self addParallaxEffectTo: self.cloud1Image withXOffset: 10.f yOffset: 20.f];
+		[self addParallaxEffectTo: self.cloud2Image withXOffset: 10.f yOffset: 20.f];
+		[self addParallaxEffectTo: self.faceImage withXOffset: 5.f yOffset: 10.f];
+	}
 
-//    [UIView animateWithDuration: duration
-//        delay: 0.f
-//        options: UIViewAnimationOptionCurveLinear
-//        animations:
-//        ^{
-//            cloud.frame = CGRectMake(
-//                toX,
-//                cloud.frame.origin.y,
-//                cloud.frame.size.width,
-//                cloud.frame.size.height);
-//        }
-//        completion:
-//        ^(BOOL finished)
-//        {
-            [self animateCloud: self.cloud1Image
-                withDuration: 45.f toX: -90 resetX: 365];
-            [self animateCloud: self.cloud2Image
-                withDuration: 35.f toX: -85 resetX: 320];
-//        }];
+	if ([MTSettingsManager sharedInstance].lifeAnimations)
+	{
+		[[NSOperationQueue mainQueue] addOperationWithBlock: ^
+		{
+			[self animateCloud: self.cloud1Image
+				withDuration: 0 toX: -90 resetX: 365];
+			[self animateCloud: self.cloud2Image
+				withDuration: 0 toX: -85 resetX: 320];
+		}];
+	}
 }
+
+- (void) viewWillDisappear:(BOOL)animated
+{
+	[super viewWillDisappear: animated];
+	
+	[self.cloud1Image.layer removeAllAnimations];
+	[self.cloud2Image.layer removeAllAnimations];
+}
+
 
 #pragma mark - Helper Methods
 
@@ -161,17 +159,19 @@
         completion:
         ^(BOOL finished)
         {
-            cloud.frame = CGRectMake(
-                resetX,
-                cloud.frame.origin.y,
-                cloud.frame.size.width,
-                cloud.frame.size.height);
+			if (finished)
+			{
+				cloud.frame = CGRectMake(
+					resetX,
+					cloud.frame.origin.y,
+					cloud.frame.size.width,
+					cloud.frame.size.height);
+			}
             
-            if (finished)
-            {
                 [weakSelf animateCloud: cloud
-                    withDuration: duration toX: toX resetX: resetX];
-            }
+                    withDuration: cloud == self.cloud1Image
+						? 45.f : 35.f
+					toX: toX resetX: resetX];
         }];
 }
 

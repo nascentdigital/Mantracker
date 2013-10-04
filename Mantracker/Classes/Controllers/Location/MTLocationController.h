@@ -17,6 +17,4 @@
 
 #pragma mark - Methods
 
-- (void)animateClouds;
-
 @end  // @interface MTLocationController
