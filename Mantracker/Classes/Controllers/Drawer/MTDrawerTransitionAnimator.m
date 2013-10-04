@@ -250,7 +250,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     
     if ([recognizer isKindOfClass: [UITapGestureRecognizer class]] == YES)
     {
-        return (point.x > 50.f
+        return (point.x > 80.f
             && point.y <= _navigationBarBottom + UPPER_BOUNDS_FOR_DRAWER_BUTTON);
     }
     else if ([recognizer isKindOfClass: [UIPanGestureRecognizer class]] == YES)
