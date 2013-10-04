@@ -19,6 +19,7 @@
     @private __strong MTKVO *_kvo;
     @private CGFloat _height;
     @private CGFloat _centerXCoord;
+    @private BOOL _resetBlur;
 }
 
 @property (nonatomic, weak) IBOutlet UIImageView *bkgImage;
@@ -62,22 +63,34 @@
         options: NSKeyValueObservingOptionNew
         target: self
         selector: @selector(MT_onCenterChanged:)];
+    
+    _resetBlur = YES;
+}
+
+- (void)viewDidDisappear: (BOOL)animated
+{
+    [super viewDidDisappear: animated];
+    _resetBlur = YES;
 }
 
 - (void)viewWillAppear: (BOOL)animated
 {
     [super viewWillAppear: animated];
 
-    MTSettingsManager *settingsManager = [MTSettingsManager sharedInstance];
-    if ([self.transitioningDelegate isKindOfClass: [MTDrawerTransitionAnimator class]]
-        && settingsManager.blurBackground)
+    if (_resetBlur == YES)
     {
-        [((MTDrawerTransitionAnimator *)self.transitioningDelegate) applyBlur];
+        MTSettingsManager *settingsManager = [MTSettingsManager sharedInstance];
+        if ([self.transitioningDelegate isKindOfClass: [MTDrawerTransitionAnimator class]]
+            && settingsManager.blurBackground)
+        {
+            [((MTDrawerTransitionAnimator *)self.transitioningDelegate) applyBlur];
+        }
+        else
+        {
+            self.bkgImage.image = nil;
+        }
     }
-    else
-    {
-        self.bkgImage.image = nil;
-    }
+    _resetBlur = NO;
 }
 
 
