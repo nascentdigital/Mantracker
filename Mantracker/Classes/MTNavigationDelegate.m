@@ -2,6 +2,7 @@
 #import "MTHomeController.h"
 #import "MTLocationController.h"
 #import "MTHomeLocationAnimator.h"
+#import "MTSettingsManager.h"
 
 
 #pragma mark Internal Interface
@@ -26,7 +27,7 @@
     toViewController: (UIViewController *)dstController
 {
     // disable transition if not set
-    if (NO)
+    if ([MTSettingsManager sharedInstance].customTransitions == NO)
     {
         return nil;
     }

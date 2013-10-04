@@ -76,14 +76,9 @@
         action: @selector(handleGesture:)];
     _drawerController.transitioningDelegate = _drawerTransitionAnimator;
     _panGestureRecognizer.delegate = _drawerTransitionAnimator;
-	
-	UIPinchGestureRecognizer *pinchGesture = [[UIPinchGestureRecognizer alloc] initWithTarget: _homeLocationAnimator
-		action: @selector(handlePinch:)];
     
-    // add gesture recognizers
+    // add pan gesture recognizer
     [[UIApplication sharedApplication].delegate.window addGestureRecognizer: _panGestureRecognizer];
-	
-	[self.view addGestureRecognizer: pinchGesture];
     
     // set the transition delegate on the drawer controller
     _drawerController.transitioningDelegate = _drawerTransitionAnimator;
@@ -97,10 +92,10 @@
     }
 	
 	UIImage *backgroundImage = [UIImage imageNamed: @"common-blur-bg"];
-	UIImageView *bgImageView = [[UIImageView alloc] initWithImage: backgroundImage];
+	UIImageView *bgImageView = [[UIImageView alloc]
+        initWithImage: backgroundImage];
 	bgImageView.layer.zPosition = -1;
 	[self.view addSubview: bgImageView];
-//	[self.view sendSubviewToBack: bgImageView];
 }
 
 - (NSInteger)collectionView: (UICollectionView *)collectionView

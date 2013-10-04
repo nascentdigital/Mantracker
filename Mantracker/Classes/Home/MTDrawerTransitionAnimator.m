@@ -30,6 +30,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     @private CGRect _toBeginFrame;
     @private CGRect _toEndFrame;
     @private UIImage *_blurredImage;
+    @private BOOL _useCustomTransition;
 }
 
 @property (nonatomic, weak) UIView *dynamicView;
@@ -79,7 +80,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     presentingController: (UIViewController *)presenting
     sourceController:(UIViewController *)source
 {
-    if ([MTSettingsManager sharedInstance].customTransitions)
+    if (_useCustomTransition)
     {
         self.appearing = YES;
         return self;
@@ -93,7 +94,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 - (id <UIViewControllerAnimatedTransitioning>)animationControllerForDismissedController:
     (UIViewController *)dismissed
 {
-    if ([MTSettingsManager sharedInstance].customTransitions)
+    if (_useCustomTransition)
     {
         self.appearing = NO;
         return self;
@@ -239,6 +240,15 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 
 - (BOOL)gestureRecognizerShouldBegin: (UIGestureRecognizer *)recognizer
 {
+    MTSettingsManager *settingsManager = [MTSettingsManager sharedInstance];
+    if (settingsManager.interactiveTransitions == NO
+        || settingsManager.customTransitions == NO)
+    {
+        return NO;
+    }
+    
+    _useCustomTransition = YES;
+
     if (recognizer.numberOfTouches != 1
         || self.transitionContext != nil)
     {
@@ -490,6 +500,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 {
     if (self.transitionContext == nil)
     {
+        _useCustomTransition = [MTSettingsManager sharedInstance].customTransitions;
         [self.homeController presentViewController: self.homeController.drawerController
             animated: YES
             completion: nil];
@@ -503,6 +514,11 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         [self.homeController dismissViewControllerAnimated: YES
             completion: nil];
     }
+}
+
+- (void)applyBlur
+{
+    [self MT_applyBlur];
 }
 
 
@@ -550,6 +566,10 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         {
             // apply blur
             [self MT_applyBlur];
+        }
+        else
+        {
+            [self.homeController.drawerController useBlurredImage: nil];
         }
     }
 }

@@ -9,6 +9,7 @@
 #import "MTDrawerController.h"
 #import "MTDrawerTransitionAnimator.h"
 #import "MTKVO.h"
+#import "MTSettingsManager.h"
 
 
 @interface MTDrawerController ()
@@ -62,7 +63,22 @@
         options: NSKeyValueObservingOptionNew
         target: self
         selector: @selector(MT_onCenterChanged:)];
-    
+}
+
+- (void)viewWillAppear: (BOOL)animated
+{
+    [super viewWillAppear: animated];
+
+    MTSettingsManager *settingsManager = [MTSettingsManager sharedInstance];
+    if ([self.transitioningDelegate isKindOfClass: [MTDrawerTransitionAnimator class]]
+        && settingsManager.blurBackground)
+    {
+        [((MTDrawerTransitionAnimator *)self.transitioningDelegate) applyBlur];
+    }
+    else
+    {
+        self.bkgImage.image = nil;
+    }
 }
 
 

@@ -32,6 +32,41 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    
+    for (UIView *view in [self.view subviews])
+    {
+        if ([view isKindOfClass: [UISwitch class]])
+        {
+            MTSettingsManager *settingsManager = [MTSettingsManager sharedInstance];
+            UISwitch *switchButton = (UISwitch *)view;
+            switch (switchButton.tag)
+            {
+                case PARALLAX_TAG:
+                    switchButton.on = settingsManager.enableParallax;
+                break;
+                
+                case BLUR_TAG:
+                    switchButton.on = settingsManager.blurBackground;
+                break;
+                
+                case CUSTOM_TRANSITIONS_TAG:
+                    switchButton.on = settingsManager.customTransitions;
+                break;
+                
+                case INTERACTIVE_TRANSITIONS_TAG:
+                    switchButton.on = settingsManager.interactiveTransitions;
+                break;
+                
+                case ENVIRONMENTAL_FEEDBAG_TAG:
+                    switchButton.on = settingsManager.environmentalFeedback;
+                break;
+                
+                case LIFE_ANIMATIONS_TAG:
+                    switchButton.on = settingsManager.lifeAnimations;
+                break;
+            }
+        }
+    }
 }
 
 
