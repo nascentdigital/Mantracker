@@ -56,8 +56,12 @@
     _drawerTransitionAnimator = [[MTDrawerTransitionAnimator alloc]
         init];
     _drawerTransitionAnimator.homeController = self;
-	_homeLocationAnimator = [[MTHomeLocationAnimator alloc] init];
+	_homeLocationAnimator = [[MTHomeLocationAnimator alloc]
+        init];
 	_homeLocationAnimator.homeController = self;
+    
+    // set the transition delegate on the drawer controller
+    _drawerController.transitioningDelegate = _drawerTransitionAnimator;
 	
     // set up pan gesture recognizer
     _panGestureRecognizer = [[UIPanGestureRecognizer alloc]
@@ -76,12 +80,9 @@
     UIView *window = [UIApplication sharedApplication].delegate.window;
     [window addGestureRecognizer: _panGestureRecognizer];
     [window addGestureRecognizer: _tapGestureRecognizer];
-    
-    // set the transition delegate on the drawer controller
-    _drawerController.transitioningDelegate = _drawerTransitionAnimator;
 }
 
-- (void) viewWillAppear:(BOOL)animated
+- (void) viewWillAppear: (BOOL)animated
 {
 	if ([MTSettingsManager sharedInstance].environmentalFeedback)
 	{
