@@ -32,7 +32,6 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     @private CGFloat _navigationBarBottom;
     @private CGRect _toBeginFrame;
     @private CGRect _toEndFrame;
-    @private UIImage *_blurredImage;
     @private BOOL _useCustomTransition;
 }
 
@@ -51,13 +50,13 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 @property (nonatomic, strong) UICollisionBehavior *collisionBehavior;
 @property (nonatomic, strong) UIGravityBehavior *gravityBehavior;
 
-- (void)MT_applyBlur;
+- (void)MT_applyBlur: (BOOL)applyBlur;
 - (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext;
 - (BOOL)MT_panGestureToPullDownDrawer: (UIViewController *)visibleController
     touchPoint: (CGPoint)point;
 - (BOOL)MT_panGestureToPullUpDrawer: (UIViewController *)visibleController
     touchPoint: (CGPoint)point;
-+ (CGPoint)centerPointForFrame: (CGRect)frame;
++ (CGPoint)MT_centerPointForFrame: (CGRect)frame;
 
 @end
 
@@ -188,12 +187,12 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
         {
             if (self.isAppearing)
             {
-                toVC.view.center = [MTDrawerTransitionAnimator centerPointForFrame:
+                toVC.view.center = [MTDrawerTransitionAnimator MT_centerPointForFrame:
                     [transitionContext finalFrameForViewController: toVC]];
             }
             else
             {
-                fromVC.view.center = [MTDrawerTransitionAnimator centerPointForFrame: _toBeginFrame];
+                fromVC.view.center = [MTDrawerTransitionAnimator MT_centerPointForFrame: _toBeginFrame];
             }
         }
         completion: ^(BOOL finished)
@@ -514,6 +513,7 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
 {
     if (self.transitionContext == nil)
     {
+        [self MT_applyBlur: [MTSettingsManager sharedInstance].blurBackground == YES];
         _useCustomTransition = [MTSettingsManager sharedInstance].customTransitions;
         [self.homeController presentViewController: self.homeController.drawerController
             animated: YES
@@ -530,33 +530,34 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
     }
 }
 
-- (void)applyBlur
-{
-    [self MT_applyBlur];
-}
 
+#pragma mark - Private Instance Methods
 
-#pragma mark - Private Methods
-
-- (void)MT_applyBlur
+- (void)MT_applyBlur: (BOOL)applyBlur
 {
     // DEMO: 2c Blurring
     // take a snapshot of current screen
-    CGSize size = self.homeController.view.frame.size;
-    size.height += self.homeController.view.frame.origin.y;
-    UIGraphicsBeginImageContextWithOptions(size, NO, 0.f);
-    [self.homeController.navigationController.view drawViewHierarchyInRect: CGRectMake(
-        0.f,
-        self.homeController.view.frame.origin.y,
-        size.width,
-        size.height)
-        afterScreenUpdates: NO];
-    UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    // set the blurred the UIImage
-    _blurredImage = [viewImage applyLightEffect];
-    [self.homeController.drawerController useBlurredImage: _blurredImage];
+    if (applyBlur)
+    {
+        CGSize size = self.homeController.view.frame.size;
+        size.height += self.homeController.view.frame.origin.y;
+        UIGraphicsBeginImageContextWithOptions(size, NO, 0.f);
+        [self.homeController.navigationController.view drawViewHierarchyInRect: CGRectMake(
+            0.f,
+            self.homeController.view.frame.origin.y,
+            size.width,
+            size.height)
+            afterScreenUpdates: NO];
+        UIImage *viewImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        // set the blurred the UIImage
+        [self.homeController.drawerController useBlurredImage: [viewImage applyLightEffect]];
+    }
+    else
+    {
+        [self.homeController.drawerController useBlurredImage: nil];
+    }
 }
 
 - (void)MT_initializeTransition: (id<UIViewControllerContextTransitioning>)transitionContext
@@ -576,15 +577,8 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             containerViewSize.height);
         _toEndFrame = [transitionContext finalFrameForViewController: toVC];
 
-        if ([MTSettingsManager sharedInstance].blurBackground)
-        {
-            // apply blur
-            [self MT_applyBlur];
-        }
-        else
-        {
-            [self.homeController.drawerController useBlurredImage: nil];
-        }
+        // apply blur
+        [self MT_applyBlur: [MTSettingsManager sharedInstance].blurBackground == YES];
     }
 }
 
@@ -604,7 +598,10 @@ static NSString * const GroundBoundaryIdentifier = @"groundBoundary";
             - LOWER_BOUNDS_FOR_DRAWER_BUTTON);
 }
 
-+ (CGPoint)centerPointForFrame: (CGRect)frame
+
+#pragma mark - Private Static Methods
+
++ (CGPoint)MT_centerPointForFrame: (CGRect)frame
 {
     return CGPointMake(frame.origin.x + frame.size.width * 0.5f,
         frame.origin.y + frame.size.height * 0.5f);

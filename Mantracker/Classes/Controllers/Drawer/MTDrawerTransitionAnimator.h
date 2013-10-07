@@ -22,6 +22,5 @@
 - (void)handleGesture: (UIPanGestureRecognizer *)recognizer;
 - (void)showDrawer;
 - (void)hideDrawer;
-- (void)applyBlur;
 
 @end
